@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+</head>
+<body>
+    {% if username %}
+        <h1>用户名: {{username}}</h1>
+        <h1>邮箱: {{email}}</h1>
+        <img src="/media/{{img}}/">
+        <!--div class="photo" style="background-image: url('{{ img }}')"-->
+        <form action="" method="post" enctype="multipart/form-data">
+            <input type="file" name="img">
+            <button type="submit">上传</button>
+        </form>
+        <a href="/personal/logout/">退出登陆</a>
+    {% else %}
+        <h1>未登陆哦</h1>
+        <a href="'/personal/login/">这就去登陆</a>
+        <a href="'/personal/regist/">这就去注册</a>
+    {% endif %}
+</body>
+</html>

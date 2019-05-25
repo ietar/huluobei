@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="stylesheet" type="text/css" href="/static/css/login.css">
+</head>
+<body>
+    <form action ='/personal/logined/' method="post">
+        <p>用户名: <input type="text" name="username" autocomplete="off" placeholder="不超过12位"
+                       autofocus="autofocus" required maxlength="12"></p>
+        <p>密码: <input type="password" name="password" required maxlength="12" placeholder="同样不超过12位"></p>
+        <input type="submit" value="登录"> <input type="reset">
+    </form>
+    <a type="submit" href="/personal/regist/"><p class='regist'>点我注册</p></a>
+</body>
+</html>
