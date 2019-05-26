@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>index1</title>
+</head>
+<body>
+<div>
+    <input type="text" value="123">
+    <input type="password" value="1234">
+    <input type="radio">男
+    <input type="checkbox">选项1
+    <input type="checkbox">选项2
+</div>
+<div>
+    <form action="" method="post">
+        <input type="text" name="askname">
+        <input type="submit">
+    </form>
+</div>
+{% if asked == 'yes' %}
+    {% if username %}
+        <p>用户名: {{username}}</p>
+        <p>邮箱:{{email}}</p>
+    {% else %}
+        <p>查无此人</p>
+    {% endif %}
+{% endif %}
+</body>
+</html>

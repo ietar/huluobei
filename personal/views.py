@@ -91,3 +91,15 @@ def index(request):
 def logout(request):
     # del request.session['user']
     return render(request, 'personal/index.html')
+
+
+def index1(request):
+    username = request.POST.get('askname')
+    u = User.objects.filter(username__exact=username)
+    data = {}
+    if username:
+        data['asked'] = 'yes'
+    if u:
+        data['username'] = u[0].username
+        data['email'] = u[0].email
+    return render(request, 'index1.html', data)

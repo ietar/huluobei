@@ -23,5 +23,6 @@ from zhihu_django import settings
 urlpatterns = [
     re_path('^$', views.index),
     path('admin/', admin.site.urls),
-    re_path('personal/', include('personal.urls'))
+    re_path('personal/', include('personal.urls')),
+    re_path('index1/$', views.index1),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

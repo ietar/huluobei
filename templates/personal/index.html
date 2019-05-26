@@ -11,7 +11,8 @@
         <p>头像(单击即可修改头像):</p><img src="/media/{{img}}/" onclick="upload()">
         <!--div class="photo" style="background-image: url('{{ img }}')"-->
         <form action="" method="post" enctype="multipart/form-data" style="display:none">
-            <input type="file" id="uploadimg" name="img" onchange="submitimg()">
+            <input type="file" id="uploadimg" name="img" onchange="submitimg()" accept="image/*"><!--style="opacity:0"-->
+            <!--label for="uploadimg" class='btn btn-success'>Choose a file</label-->
             <button type="submit" id="submit">上传</button>
         </form><br>
         <a href="/personal/logout/">退出登陆</a>
