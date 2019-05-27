@@ -1,3 +1,4 @@
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 # Create your views here.
 from personal.models import User
@@ -89,7 +90,7 @@ def index(request):
 
 
 def logout(request):
-    # del request.session['user']
+    request.session.clear()
     return render(request, 'personal/index.html')
 
 
@@ -103,3 +104,20 @@ def index1(request):
         data['username'] = u[0].username
         data['email'] = u[0].email
     return render(request, 'index1.html', data)
+
+
+def shit(request):
+    # username = request.POST.get('askname')
+    # u = User.objects.filter(username__exact=username)
+    # data = {}
+    # if username:
+    #     data['asked'] = 'yes'
+    # if u:
+    #     data['username'] = u[0].username
+    #     data['email'] = u[0].email
+    data = {
+        'asked': 'yes',
+        'username': 'hard_coding_username',
+        'email': 'fucking_shit',
+    }
+    return HttpResponse(JsonResponse(data))

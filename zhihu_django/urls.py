@@ -25,4 +25,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path('personal/', include('personal.urls')),
     re_path('index1/$', views.index1),
+    re_path('shit/$', views.shit),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

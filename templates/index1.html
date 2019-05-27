@@ -3,6 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <title>index1</title>
+    <script>
+        function func1(){
+             var xhr = new XMLHttpRequest();
+             xhr.open('post', '/shit/');
+             xhr.send();
+             xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4){
+                    if (xhr.status == 200 || xhr.status == 304){
+                        ret = JSON.parse(xhr.responseText);
+                        document.getElementById('d1').innerHTML = ret.username;
+                        document.getElementById('d2').innerHTML = ret.email;
+                    }
+                }
+             }
+        }
+    </script>
 </head>
 <body>
 <div>
@@ -15,7 +31,8 @@
 <div>
     <form action="" method="post">
         <input type="text" name="askname">
-        <input type="submit">
+        <!--input type="submit"-->
+        <button type='button' onclick="func1()">点我提交</button>
     </form>
 </div>
 {% if asked == 'yes' %}
@@ -26,5 +43,7 @@
         <p>查无此人</p>
     {% endif %}
 {% endif %}
+<p id="d1"><br><br>hehe {{username}}</p>
+<p id="d2">hehe2 {{email}}</p>
 </body>
 </html>
