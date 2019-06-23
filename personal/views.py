@@ -2,6 +2,8 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 # Create your views here.
 from personal.models import User
+import hmac
+import random
 
 
 def login(request):
@@ -18,7 +20,9 @@ def logined(request):
             'result': result,
         }
     else:
-        if password != User.objects.get(username__exact=username).password:
+        shifted_password = hmac.new(key=bytes(user[0].salt, encoding='utf-8'), msg=bytes(password, encoding='utf-8'),
+                                    digestmod='MD5').hexdigest()
+        if shifted_password != User.objects.get(username__exact=username).password:
             result = 'password failed'
             data = {
                 'result': result,
@@ -57,9 +61,18 @@ def registed(request):
     else:
         newuser = User()
         newuser.username = username
-        newuser.password = password
+        newuser.salt = str(random.randint(1,100000)) + random.choice(username) + random.choice(username)
+        newuser.password = hmac.new(key=bytes(newuser.salt, encoding='utf-8'), msg=bytes(password, encoding='utf-8'),
+                                    digestmod='MD5').hexdigest()
         newuser.email = email
         newuser.save()
+
+        user = User.objects.filter(username__exact=username)
+        request.session['user'] = {
+            'username': user[0].username,
+            'email': user[0].email,
+            'img': str(user[0].img),
+        }
     data = {
         'result': result,
     }
@@ -107,17 +120,17 @@ def index1(request):
 
 
 def shit(request):
-    # username = request.POST.get('askname')
-    # u = User.objects.filter(username__exact=username)
-    # data = {}
-    # if username:
-    #     data['asked'] = 'yes'
-    # if u:
-    #     data['username'] = u[0].username
-    #     data['email'] = u[0].email
-    data = {
-        'asked': 'yes',
-        'username': 'hard_coding_username',
-        'email': 'fucking_shit',
-    }
+    username = request.POST.get('askname')
+    u = User.objects.filter(username__exact=username)
+    data = {}
+    if username:
+        data['asked'] = 'yes'
+    if u:
+        data['username'] = u[0].username
+        data['email'] = u[0].email
+    # data = {
+    #     'asked': 'yes',
+    #     'username': 'hard_coding_username',
+    #     'email': 'fucking_shit',
+    # }
     return HttpResponse(JsonResponse(data))
