@@ -7,7 +7,7 @@ function func1(){
     xhr.onreadystatechange = function(){
         if(xhr.readyState == 4){
             if (xhr.status == 200 || xhr.status == 304){
-                ret = JSON.parse(xhr.responseText);
+                var ret = JSON.parse(xhr.responseText);
                 document.getElementById('d1').innerHTML = ret.username;
                 document.getElementById('d2').innerHTML = ret.email;
             }
