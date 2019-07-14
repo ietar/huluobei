@@ -61,7 +61,7 @@ def registed(request):
     else:
         newuser = User()
         newuser.username = username
-        newuser.salt = str(random.randint(1,100000)) + random.choice(username) + random.choice(username)
+        newuser.salt = str(random.randint(1, 100000)) + random.choice(username) + random.choice(username)
         newuser.password = hmac.new(key=bytes(newuser.salt, encoding='utf-8'), msg=bytes(password, encoding='utf-8'),
                                     digestmod='MD5').hexdigest()
         newuser.email = email
@@ -128,9 +128,7 @@ def shit(request):
     if u:
         data['username'] = u[0].username
         data['email'] = u[0].email
-    # data = {
-    #     'asked': 'yes',
-    #     'username': 'hard_coding_username',
-    #     'email': 'fucking_shit',
-    # }
+    else:
+        data['username'] = '查无此人'
+        data['email'] = '邮箱当然也查不到'
     return HttpResponse(JsonResponse(data))
