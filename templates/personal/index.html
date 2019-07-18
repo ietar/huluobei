@@ -15,12 +15,14 @@
             <!--label for="uploadimg" class='btn btn-success'>Choose a file</label-->
             <button type="submit" id="submit">上传</button>
         </form><br>
+    <p style="font-size:15px;color:grey">上次登录时间: {{atime}}</p>
         <a href="/personal/logout/">退出登陆</a>
     {% else %}
         <h1>未登陆哦</h1>
         <a href="/personal/login/">这就去登陆</a>
         <a href="/personal/regist/">这就去注册</a>
     {% endif %}
+    <p>目前共有 {{counts}} 位注册用户</p>
 
 <script type="text/javascript" src="/static/js/upload.js/"></script>
 </body>

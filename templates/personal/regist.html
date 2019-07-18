@@ -3,14 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>注册</title>
+    <script type="text/javascript" src="/static/js/regist.js/"></script>
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/regist.css">
 </head>
 <body>
-    <form action ='/personal/registed/' method="post">
-        <p>用户名: <input type="text" name="username" autocomplete="off" placeholder="不超过20位"
-                       autofocus="autofocus" required maxlength="20"></p>
-        <p>密码: <input type="password" name="password" required maxlength="20" placeholder="同样不超过20位"></p>
-        <p>邮箱(用于找回密码): <input type="email" name="email" required maxlength="20" placeholder="同样不超过20位"></p>
-        <input type="submit" value="注册"> <input type="reset">
+    <form action ='/personal/registed/' method="post" id="form1">
+        <p><label for='username'>用户名: <input type="text" name='username' id="username" autocomplete="off" placeholder="6-20位"
+                                             autofocus="autofocus" required maxlength="20" minlength="6" onblur="usercheck()"></label>
+            <span id="usercheckinfo" >请输入用户名</span></p>
+
+        <p><label for="password">输入密码: <input type="password" name='password' id="password" required minlength="6"
+                                              maxlength="20" placeholder="6-20位"></label></p>
+        <p><label for="repassword">重复密码: <input type="password" name='repassword' id="repassword" minlength="6"
+                                                required maxlength="20" placeholder="6-20位" onblur="check()"></label></p>
+        <p><label for="email">邮箱(用于找回密码): <input type="email" name='email' id="email" required maxlength="30"
+                                                 placeholder="30位以内"></label></p>
+        <input type="submit" name='submit' id='submit' value="注册" onclick="check()"> <input type="reset">
     </form>
     <p><a href="/personal/login/">想起了账号 这就去登陆</a></p>
 </body>

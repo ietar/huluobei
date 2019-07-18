@@ -1,9 +1,10 @@
+import datetime
 from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
-# Create your views here.
+from django.shortcuts import render, redirect
 from personal.models import User
 import hmac
 import random
+# Create your views here.
 
 
 def login(request):
@@ -39,6 +40,7 @@ def logined(request):
                 'username': user[0].username,
                 'email': user[0].email,
             }
+    print(request.session)
     return render(request, 'personal/logined.html', data)
 
 
@@ -65,6 +67,9 @@ def registed(request):
         newuser.password = hmac.new(key=bytes(newuser.salt, encoding='utf-8'), msg=bytes(password, encoding='utf-8'),
                                     digestmod='MD5').hexdigest()
         newuser.email = email
+        dt = datetime.datetime.now()
+        newuser.regist_time = dt
+        newuser.access_time = dt
         newuser.save()
 
         user = User.objects.filter(username__exact=username)
@@ -80,31 +85,35 @@ def registed(request):
 
 
 def index(request):
+    counts = len(User.objects.raw('select * from personal_user;'))
     try:
         user = request.session['user']
     except KeyError:
         data = {
-
+            'counts': counts,
         }
         return render(request, 'personal/index.html', data)
     u = User.objects.get(username__exact=user['username'])
+
     upload = request.FILES.get('img')
     if upload:
         u.img = upload
-        u.save()
     data = {
         'username': user['username'],
         'email': user['email'],
         'img': u.img,
+        'counts': counts,
+        'atime': u.access_time,
     }
-    # print(user)
-    # print(upload)
+    u.access_time = datetime.datetime.now()
+    u.save()
+    # print(request.session['user'])
     return render(request, 'personal/index.html', data)
 
 
 def logout(request):
     request.session.clear()
-    return render(request, 'personal/index.html')
+    return redirect(r'/personal/index/')
 
 
 def index1(request):
@@ -132,3 +141,13 @@ def shit(request):
         data['username'] = '查无此人'
         data['email'] = '邮箱当然也查不到'
     return HttpResponse(JsonResponse(data))
+
+
+def usercheck(request):
+    # print('usercheck called')
+    username = request.POST.get('username')
+    # print('username = ', username)
+    u = User.objects.filter(username__exact=username)
+    u = len(u)
+    # print(u)
+    return HttpResponse(JsonResponse({'username': u}))

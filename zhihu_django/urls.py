@@ -26,4 +26,5 @@ urlpatterns = [
     re_path('personal/', include('personal.urls')),
     re_path('index1/$', views.index1),
     re_path('shit/$', views.shit),
+    re_path('usercheck', views.usercheck),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
