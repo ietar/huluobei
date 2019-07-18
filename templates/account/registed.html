@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>注册结果</title>
-    {% if result == 'ok' %}<meta http-equiv="refresh" content="3;URL=/personal/index/">{% endif %}
+    {% if result == 'ok' %}<meta http-equiv="refresh" content="3;URL=/account/index/">{% endif %}
 </head>
 <body>
     {% if result == 'ok' %}
@@ -11,7 +11,7 @@
         <p>3秒后前往首页</p>
     {% else %}
         <h1>用户名重复 麻烦回去重新注册=。=</h1>
-        <a href="/personal/regist/"><p>>返回登陆</p></a>
+        <a href="/account/regist/"><p>>返回注册</p></a>
     {% endif %}
 </body>
 </html>

@@ -1,14 +1,14 @@
 import datetime
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
-from personal.models import User
+from account.models import User
 import hmac
 import random
 # Create your views here.
 
 
 def login(request):
-    return render(request, 'personal/login.html')
+    return render(request, 'account/login.html')
 
 
 def logined(request):
@@ -41,14 +41,14 @@ def logined(request):
                 'email': user[0].email,
             }
     print(request.session)
-    return render(request, 'personal/logined.html', data)
+    return render(request, 'account/logined.html', data)
 
 
 def regist(request):
     data = {
 
     }
-    return render(request, 'personal/regist.html', data)
+    return render(request, 'account/regist.html', data)
 
 
 def registed(request):
@@ -57,7 +57,7 @@ def registed(request):
     email = request.POST.get('email')
     result = 'ok'
     user = User.objects.filter(username__exact=username)
-    print(len(user))
+    # print(len(user))
     if len(user) >= 1:
         result = 'not ok'
     else:
@@ -81,18 +81,18 @@ def registed(request):
     data = {
         'result': result,
     }
-    return render(request, 'personal/registed.html', data)
+    return render(request, 'account/registed.html', data)
 
 
 def index(request):
-    counts = len(User.objects.raw('select * from personal_user;'))
+    counts = len(User.objects.raw('select * from account_user;'))
     try:
         user = request.session['user']
     except KeyError:
         data = {
             'counts': counts,
         }
-        return render(request, 'personal/index.html', data)
+        return render(request, 'account/index.html', data)
     u = User.objects.get(username__exact=user['username'])
 
     upload = request.FILES.get('img')
@@ -108,12 +108,12 @@ def index(request):
     u.access_time = datetime.datetime.now()
     u.save()
     # print(request.session['user'])
-    return render(request, 'personal/index.html', data)
+    return render(request, 'account/index.html', data)
 
 
 def logout(request):
     request.session.clear()
-    return redirect(r'/personal/index/')
+    return redirect(r'/account/index/')
 
 
 def index1(request):

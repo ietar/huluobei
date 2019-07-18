@@ -17,13 +17,13 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, re_path, include
 
-from personal import views
+from account import views
 from zhihu_django import settings
 
 urlpatterns = [
     re_path('^$', views.index),
     path('admin/', admin.site.urls),
-    re_path('personal/', include('personal.urls')),
+    re_path('account/', include('account.urls')),
     re_path('index1/$', views.index1),
     re_path('shit/$', views.shit),
     re_path('usercheck', views.usercheck),

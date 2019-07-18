@@ -8,7 +8,7 @@
     <link rel="stylesheet" type="text/css" href="/static/css/regist.css">
 </head>
 <body>
-    <form action ='/personal/registed/' method="post" id="form1">
+    <form action ='/account/registed/' method="post" id="form1">
         <p><label for='username'>用户名: <input type="text" name='username' id="username" autocomplete="off" placeholder="6-20位"
                                              autofocus="autofocus" required maxlength="20" minlength="6" onblur="usercheck()"></label>
             <span id="usercheckinfo" >请输入用户名</span></p>
@@ -21,6 +21,6 @@
                                                  placeholder="30位以内"></label></p>
         <input type="submit" name='submit' id='submit' value="注册" onclick="check()"> <input type="reset">
     </form>
-    <p><a href="/personal/login/">想起了账号 这就去登陆</a></p>
+    <p><a href="/account/login/">想起了账号 这就去登陆</a></p>
 </body>
 </html>

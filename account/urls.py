@@ -1,6 +1,6 @@
 from django.conf.urls.static import static
 from django.urls import re_path
-from personal import views
+from account import views
 from zhihu_django import settings
 
 urlpatterns = [
