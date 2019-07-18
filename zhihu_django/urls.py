@@ -24,7 +24,8 @@ urlpatterns = [
     re_path('^$', views.index),
     path('admin/', admin.site.urls),
     re_path('account/', include('account.urls')),
-    re_path('index1/$', views.index1),
+    re_path('ajax_test/$', views.ajax_test),
+    re_path('index/$', views.index),
     re_path('shit/$', views.shit),
     re_path('usercheck', views.usercheck),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

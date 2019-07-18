@@ -116,7 +116,7 @@ def logout(request):
     return redirect(r'/account/index/')
 
 
-def index1(request):
+def ajax_test(request):
     username = request.POST.get('askname')
     u = User.objects.filter(username__exact=username)
     data = {}
@@ -125,7 +125,7 @@ def index1(request):
     if u:
         data['username'] = u[0].username
         data['email'] = u[0].email
-    return render(request, 'index1.html', data)
+    return render(request, 'ajax_test.html', data)
 
 
 def shit(request):
@@ -134,6 +134,8 @@ def shit(request):
     data = {}
     if username:
         data['asked'] = 'yes'
+    else:
+        return HttpResponse('这么访问不行啊')
     if u:
         data['username'] = u[0].username
         data['email'] = u[0].email
