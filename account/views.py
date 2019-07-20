@@ -4,6 +4,7 @@ from django.shortcuts import render, redirect
 from account.models import User
 import hmac
 import random
+import pytz
 from ietar_py_scripts import sendmail
 
 
@@ -233,9 +234,15 @@ def reset(request):
     resetsalt = request.GET.get('resetsalt')
     uid = request.GET.get('id')
     salt = request.GET.get('salt')
+    if not resetsalt or not uid or not salt:
+        return HttpResponse('这样访问不行')
     u = User.objects.filter(id__exact=uid, reset_password_salt__exact=resetsalt, salt__exact=salt)
     if len(u) == 1:
         u = u[0]
+        clock = datetime.datetime.now().replace(tzinfo=datetime.timezone(datetime.timedelta(hours=8)))
+        res = clock - u.reset_time
+        if res.seconds > 3600:
+            return HttpResponse('链接过期 请重新获取重置密码链接')
         data['username'] = u.username
         request.session['user'] = {
             'username': u.username,
