@@ -2,7 +2,10 @@
   <dictionary name="d785">
     <words>
       <w>askname</w>
+      <w>ietar</w>
       <w>newuser</w>
+      <w>resetpassword</w>
+      <w>sendresetmail</w>
     </words>
   </dictionary>
 </component>

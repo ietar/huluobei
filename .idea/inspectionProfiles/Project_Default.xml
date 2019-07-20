@@ -5,6 +5,7 @@
       <option name="ignoredIdentifiers">
         <list>
           <option value="personal.models.User.objects" />
+          <option value="account.models.User.objects" />
         </list>
       </option>
     </inspection_tool>
