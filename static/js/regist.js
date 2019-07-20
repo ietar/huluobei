@@ -37,22 +37,34 @@ function usercheck(){
             }
         }
     }
+}
 
-    // var username = document.getElementById('username').value;
-    // var xhr = new XMLHttpRequest();
-    // xhr.open('post', '/usercheck/');
-    // xhr.send(username);
-    // xhr.onreadystatechange = function(){
-    //     if(4 === xhr.readyState){
-    //         if (xhr.status === 200 || xhr.status === 304){
-    //             var ret = JSON.parse(xhr.responseText);
-    //             if (ret.username){
-    //                 document.getElementById('usercheckinfo').innerHTML = '用户名重复';
-    //             }
-    //             else{
-    //                 document.getElementById('usercheckinfo').innerHTML = '未注册的用户名';
-    //             }
-    //         }
-    //     }
-    // }
+function emailcheck(){
+    var emailinfo = document.getElementById('emailcheckinfo');
+    var email = document.getElementById('email');
+    if (email.value === ''){
+        return 0;
+    }
+    var form = document.getElementById('form1');
+    var fd = new FormData(form);
+    var xhr = new XMLHttpRequest();
+    xhr.open('post', '/emailcheck/');
+    xhr.send(fd);
+    xhr.onreadystatechange = function(){
+        if(4 === xhr.readyState){
+            if (xhr.status === 200 || xhr.status === 304){
+                var ret = JSON.parse(xhr.responseText);
+                if (ret.email){
+                    emailinfo.innerHTML = '× 邮箱重复';
+                    emailinfo.style.color = 'red';
+                    return 0;
+                }
+                else{
+                    emailinfo.innerHTML = '√ 未注册的邮箱';
+                    emailinfo.style.color = 'green';
+                    return 1;
+                }
+            }
+        }
+    }
 }

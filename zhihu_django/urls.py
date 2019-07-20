@@ -28,4 +28,5 @@ urlpatterns = [
     re_path('index/$', views.index),
     re_path('shit/$', views.shit),
     re_path('usercheck', views.usercheck),
+    re_path('emailcheck', views.emailcheck),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

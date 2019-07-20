@@ -149,13 +149,17 @@ def shit(request):
 
 
 def usercheck(request):
-    # print('usercheck called')
     username = request.POST.get('username')
-    # print('username = ', username)
     u = User.objects.filter(username__exact=username)
     u = len(u)
-    # print(u)
     return HttpResponse(JsonResponse({'username': u}))
+
+
+def emailcheck(request):
+    email = request.POST.get('email')
+    u = User.objects.filter(email__exact=email)
+    u = len(u)
+    return HttpResponse(JsonResponse({'email': u}))
 
 
 def resetpassword(request):
@@ -176,15 +180,18 @@ def sendresetmail(request):
         return HttpResponse('不存在该用户')
     else:
         u = u[0]
-        u.access_time = datetime.datetime.now()
+        username = u.username
+        salt = u.salt
+        uid = u.id
         temp = str(random.randint(1, 100000)) + random.choice(username) + random.choice(username)
         u.reset_password_salt = hmac.new(key=bytes(temp, encoding='utf-8'),
                                          msg=bytes(str(datetime.datetime.now()), encoding='utf-8'),
                                          digestmod='MD5').hexdigest()
         temp = u.reset_password_salt
+        u.reset_time = datetime.datetime.now()
         u.save()
         m_email = u.email.split('@', 1)[0][:-4] + '****@' + u.email.split('@', 1)[1]
-        msg ='''取回密码说明
+        msg = '''取回密码说明
         {username}， 这封信是由 {host} 发送的。
 
 您收到这封邮件，是由于这个邮箱地址在 {host} 被登记为用户邮箱， 且该用户请求使用 Email 密码重置功能所致。
@@ -208,7 +215,38 @@ def sendresetmail(request):
 
 此致
 {host} 管理团队. {host}
-'''.format(username=u.username, host='http://www.ietar.xyz/', ip=ip, url = 'http://www.ietar.xyz/account/reset?resetsalt={}'.format(temp))
+'''.format(username=u.username, host='http://www.ietar.xyz/', ip=ip,
+           url='http://www.ietar.xyz/account/reset?resetsalt={}&id={}&salt={}'.format(temp, uid, salt))
         sendmail.sendresetpassword(message=msg)
 
     return HttpResponse('已成功发送找回邮件至 {}'.format(m_email))
+
+
+def reset(request):
+    data = {}
+    resetsalt = request.GET.get('resetsalt')
+    uid = request.GET.get('id')
+    salt = request.GET.get('salt')
+    u = User.objects.filter(id__exact=uid, reset_password_salt__exact=resetsalt, salt__exact=salt)
+    if len(u) == 1:
+        u = u[0]
+        data['username'] = u.username
+        request.session['user'] = {
+            'username': u.username,
+            'email': u.email,
+            'img': str(u.img),
+        }
+    return render(request, r'account/reset.html', data)
+
+
+def reset_done(request):
+    try:
+        username = request.session['user']['username']
+    except KeyError:
+        return HttpResponse('您从哪来的 session不对吧')
+    password = request.POST.get('password')
+    u = User.objects.filter(username__exact=username)[0]
+    u.password = hmac.new(key=bytes(u.salt, encoding='utf-8'), msg=bytes(password, encoding='utf-8'),
+                                    digestmod='MD5').hexdigest()
+    u.save()
+    return render(request, r'account/reset_done.html')

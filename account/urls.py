@@ -12,5 +12,7 @@ urlpatterns = [
     re_path(r'logout/$', views.logout),
     re_path(r'resetpassword/$', views.resetpassword),
     re_path(r'sendresetmail/$', views.sendresetmail),
+    re_path(r'reset/$', views.reset),
+    re_path(r'reset_done/$', views.reset_done),
     # re_path(r'upload/$', views.upload),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
