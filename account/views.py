@@ -96,7 +96,12 @@ def index(request):
             'counts': counts,
         }
         return render(request, 'account/index.html', data)
-    u = User.objects.get(username__exact=user['username'])
+    u = User.objects.filter(username__exact=user['username'])
+    if len(u) == 1:
+        u = u[0]
+    else:
+        request.session.clear()
+        return redirect('/index/')
 
     upload = request.FILES.get('img')
     if upload:
@@ -116,7 +121,7 @@ def index(request):
 
 def logout(request):
     request.session.clear()
-    return redirect(r'/account/index/')
+    return redirect(r'/index/')
 
 
 def ajax_test(request):
@@ -183,6 +188,7 @@ def sendresetmail(request):
         username = u.username
         salt = u.salt
         uid = u.id
+        email = u.email
         temp = str(random.randint(1, 100000)) + random.choice(username) + random.choice(username)
         u.reset_password_salt = hmac.new(key=bytes(temp, encoding='utf-8'),
                                          msg=bytes(str(datetime.datetime.now()), encoding='utf-8'),
@@ -217,7 +223,7 @@ def sendresetmail(request):
 {host} 管理团队. {host}
 '''.format(username=u.username, host='http://www.ietar.xyz/', ip=ip,
            url='http://www.ietar.xyz/account/reset?resetsalt={}&id={}&salt={}'.format(temp, uid, salt))
-        sendmail.sendresetpassword(message=msg)
+        sendmail.sendresetpassword(message=msg,to=email)
 
     return HttpResponse('已成功发送找回邮件至 {}'.format(m_email))
 
