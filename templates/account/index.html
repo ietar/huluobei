@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
+    <script type="text/javascript" src="/static/js/index.js/"></script>
 </head>
 <body>
     {% if username %}
@@ -15,8 +16,17 @@
             <!--label for="uploadimg" class='btn btn-success'>Choose a file</label-->
             <button type="submit" id="submit">上传</button>
         </form><br>
-    <p style="font-size:15px;color:grey">上次登录时间: {{atime}}</p>
-        <a href="/account/logout/">退出登陆</a>
+        <p style="font-size:15px;color:grey">上次登录时间: {{atime}}</p>
+        <a href="/account/logout/">退出登陆</a><br><br>
+
+        <form name="drawcards" id="drawcards" method="post" action="/drawcards/">
+            <!--<button type="button" onclick="f1()">试试手气</button>-->
+            <input type="submit" value="试试手气">
+            <span id="draw_result"></span>
+            {% for i in ret %}
+                {{i.name}}
+            {% endfor %}
+        </form>
     {% else %}
         <h1>未登陆哦</h1>
         <a href="/account/login/">这就去登陆</a>

@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from account.models import User
 import hmac
 import random
-from ietar_py_scripts import sendmail
+from ietar_py_scripts import sendmail, get_ip, draw_cards_arknight
 
 
 # Create your views here.
@@ -88,6 +88,8 @@ def registed(request):
 
 
 def index(request):
+    ip = get_ip.get_ip(request)
+    print(ip)
     counts = len(User.objects.raw('select * from account_user;'))
     try:
         user = request.session['user']
@@ -115,7 +117,6 @@ def index(request):
     }
     u.access_time = datetime.datetime.now()
     u.save()
-    # print(request.session['user'])
     return render(request, 'account/index.html', data)
 
 
@@ -189,6 +190,7 @@ def sendresetmail(request):
         salt = u.salt
         uid = u.id
         email = u.email
+        # ip = get_ip.get_ip(request)
         temp = str(random.randint(1, 100000)) + random.choice(username) + random.choice(username)
         u.reset_password_salt = hmac.new(key=bytes(temp, encoding='utf-8'),
                                          msg=bytes(str(datetime.datetime.now()), encoding='utf-8'),
@@ -223,7 +225,7 @@ def sendresetmail(request):
 {host} 管理团队. {host}
 '''.format(username=u.username, host='http://www.ietar.xyz/', ip=ip,
            url='http://www.ietar.xyz/account/reset?resetsalt={}&id={}&salt={}'.format(temp, uid, salt))
-        sendmail.sendresetpassword(message=msg,to=email)
+        sendmail.sendresetpassword(message=msg, to=email)
 
     return HttpResponse('已成功发送找回邮件至 {}'.format(m_email))
 
@@ -253,6 +255,34 @@ def reset_done(request):
     password = request.POST.get('password')
     u = User.objects.filter(username__exact=username)[0]
     u.password = hmac.new(key=bytes(u.salt, encoding='utf-8'), msg=bytes(password, encoding='utf-8'),
-                                    digestmod='MD5').hexdigest()
+                          digestmod='MD5').hexdigest()
     u.save()
     return render(request, r'account/reset_done.html')
+
+
+def drawcards(request):
+    res = draw_cards_arknight.draw10()
+    res = [[x.name, x.stars, None] for x in res]
+    for i in res:
+        if i[1] == 6:
+            i[1] = '#fff'
+            i[2] = '#dc3545'
+        elif i[1] == 5:
+            i[1] = '#212529'
+            i[2] = '#ffc107'
+        elif i[1] == 4:
+            i[1] = '#fff'
+            i[2] = '#117a8b'
+        elif i[1] == 3:
+            i[1] = '#fff'
+            i[2] = '#1e7e34'
+        else:
+            i[1] = '#212529'
+            i[2] = '#dae0e5'
+    # res = [(x.name, x.stars) for x in res]
+
+    result = {'res': res}
+    # return HttpResponse(JsonResponse({'result': res}))
+    return render(request, r'drawcards.html', result)
+
+
