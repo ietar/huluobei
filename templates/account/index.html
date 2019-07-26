@@ -21,12 +21,16 @@
 
         <form name="drawcards" id="drawcards" method="post" action="/drawcards/">
             <!--<button type="button" onclick="f1()">试试手气</button>-->
-            <input type="submit" value="试试手气">
+            <button type="button" onclick="f2()">试试手气</button>
+            <button type="button" onclick="f3()">一会再试</button>
             <span id="draw_result"></span>
             {% for i in ret %}
                 {{i.name}}
             {% endfor %}
         </form>
+
+        <iframe id="iframe1" src="" width="0" height ="0" >您的浏览器不支持呀</iframe>
+
     {% else %}
         <h1>未登陆哦</h1>
         <a href="/account/login/">这就去登陆</a>

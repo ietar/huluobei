@@ -13,3 +13,15 @@ function f1(){
         }
     }
 }
+function f2(){
+    var iframe = document.getElementById('iframe1');
+    iframe.src = "/drawcards/";
+    iframe.width = 660;
+    iframe.height = 120;
+}
+function f3(){
+    var iframe = document.getElementById('iframe1');
+    iframe.src = "";
+    iframe.width = 0;
+    iframe.height = 0;
+}
