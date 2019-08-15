@@ -284,5 +284,3 @@ def drawcards(request):
     result = {'res': res}
     # return HttpResponse(JsonResponse({'result': res}))
     return render(request, r'drawcards.html', result)
-
-
