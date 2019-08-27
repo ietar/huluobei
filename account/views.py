@@ -261,7 +261,20 @@ def reset_done(request):
 
 
 def drawcards(request):
-    res = draw_cards_arknight.draw10()
+    draw = draw_cards_arknight.Draw()
+    try:
+        no6 = request.session['no6']
+        no5 = request.session['no5']
+    except Exception as e:
+        print(e)
+        no6 = 0
+        no5 = 0
+    draw.count_no_5 = no5
+    draw.count_no_6 = no6
+
+    res = draw.draw10()
+    request.session['no6'] = draw.count_no_6
+    request.session['no5'] = draw.count_no_5
     res = [[x.name, x.stars, None] for x in res]
     for i in res:
         if i[1] == 6:
@@ -281,6 +294,16 @@ def drawcards(request):
             i[2] = '#dae0e5'
     # res = [(x.name, x.stars) for x in res]
 
-    result = {'res': res}
+    result = {
+        'res': res,
+        'no6': draw.count_no_6,
+        'no5': draw.count_no_5,
+    }
     # return HttpResponse(JsonResponse({'result': res}))
     return render(request, r'drawcards.html', result)
+
+
+def reset_record(request):
+    request.session['no6'] = 0
+    request.session['no5'] = 0
+    return render(request, r'drawcards.html', {'no6': 0, 'no5': 0})

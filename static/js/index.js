@@ -17,7 +17,7 @@ function f2(){
     var iframe = document.getElementById('iframe1');
     iframe.src = "/drawcards/";
     iframe.width = 660;
-    iframe.height = 120;
+    iframe.height = 150;
 }
 function f3(){
     var iframe = document.getElementById('iframe1');
