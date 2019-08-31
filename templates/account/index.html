@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>首页</title>
+    <script type="text/javascript" src="/static/js/index.js/"></script>
 </head>
 <body>
     {% if username %}
@@ -15,13 +16,38 @@
             <!--label for="uploadimg" class='btn btn-success'>Choose a file</label-->
             <button type="submit" id="submit">上传</button>
         </form><br>
-    <p style="font-size:15px;color:grey">上次登录时间: {{atime}}</p>
-        <a href="/account/logout/">退出登陆</a>
+        <p style="font-size:15px;color:grey">上次登录时间: {{atime}}</p>
+        <a href="/account/logout/">退出登陆</a><br><br>
+
+
+
     {% else %}
         <h1>未登陆哦</h1>
         <a href="/account/login/">这就去登陆</a>
         <a href="/account/regist/">这就去注册</a>
     {% endif %}
+    <div>
+        <br>
+        <p>一些个人代码帖子</p>
+        <a target="_blank" href="https://github.com/ietar"><b>github站点 可开源的小物件有空会都扔上去</b></a><br><br>
+        <a target="_blank" href="https://fishc.com.cn/thread-143822-1-1.html">减少欧非的抽红包</a><br>
+        <a target="_blank" href="https://fishc.com.cn/thread-143394-1-1.html">模拟明日方舟抽卡v2.2</a><br>
+        <a target="_blank" href="https://fishc.com.cn/thread-141601-1-1.html">发送文本邮件</a><br>
+        <a target="_blank" href="https://fishc.com.cn/thread-141064-1-1.html"><span style="color:yellowgreen">复习一下妹子图（啊不对）爬虫</span></a><br>
+        <a target="_blank" href="https://fishc.com.cn/thread-134327-1-1.html">最大质因数算法优化</a><br>
+        <a target="_blank" href="https://fishc.com.cn/thread-134199-1-1.html">豆瓣电影top250爬虫</a><br>
+        <a target="_blank" href="https://fishc.com.cn/thread-133755-1-1.html">打飞机是男人的浪漫! v2.0已更新</a><br><br><br>
+    </div>
+    <form name="drawcards" id="drawcards" method="post" action="/drawcards/">
+        <!--<button type="button" onclick="f1()">试试手气</button>-->
+        <button type="button" onclick="f2()">试试手气</button>
+        <button type="button" onclick="f3()">一会再试</button>
+        <span id="draw_result"></span>
+        {% for i in ret %}
+            {{i.name}}
+        {% endfor %}
+    </form>
+    <iframe id="iframe1" src="" width="0" height ="0" frameborder="0" >您的浏览器不支持呀</iframe>
     <p>目前共有 {{counts}} 位注册用户</p>
 
 <script type="text/javascript" src="/static/js/upload.js/"></script>
