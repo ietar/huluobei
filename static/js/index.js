@@ -26,11 +26,16 @@ function f3(){
     iframe.height = 0;
 }
 $(function () {
-    let works_button = $('div.header>div.container>div').eq(0);
-    console.log('here:', works_button);
-    let works = $('div.works');
-    console.log("works:", works);
-    works_button.click(function () {
-        works.slideToggle();
-})
+    let buttons = $('div.header>div.container>div');
+    console.log('here:', buttons);
+    console.log('this:', buttons.find('div'));
+    console.log('target:', $('div.works'));
+    buttons.mouseenter(function () {
+        console.log('trying:', $(this).find('div'));
+        $(this).find('div').slideDown(300);
+    })
+    buttons.mouseleave(function () {
+        console.log('trying:', $(this).find('div'));
+        $(this).find('div').slideUp(200);
+    })
 });

@@ -33,6 +33,9 @@ div.header>div.container>div{
     background-color: #a19393;
     cursor:pointer;
 }
+div.container span{
+    display:block;
+}
 div.userinfo{
     position:relative;
     top:3rem;
@@ -51,7 +54,7 @@ div.userinfo>img{
 div.userinfo>img:hover{
     box-shadow: 10px 10px 5px #AAAAAA;
 }
-div.works{
+div.container>div>div{
     font-size: 0.8rem;
     position:absolute;
     border:1px dashed;
@@ -59,7 +62,10 @@ div.works{
     display:none;
     overflow: hidden;
 }
-div.works>a{
+div.container>div>div{
+    display: none;
+}
+div.container>div>div>*{
     text-decoration: none;
     cursor:pointer;
     border:1px solid #BBBBBB;
