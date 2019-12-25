@@ -8,6 +8,10 @@
 # v2.3 增加了Draw类 将draw()和draw10()封装其中 并增加了6星出率50抽不出后递增功能(与游戏一致)
 # 新卡池前10抽必出5星计划鸽了(这个提升也不大) 计划活动开了更新卡池
 # 2.4 更新了火蓝之心上半段卡池
+# 2.5 更新了火蓝之心下半段卡池 桃金娘 星极 赫拉格
+# 2.5.1 卡池更新到麦哲伦
+# 2.5.2 卡池更新至莫斯提马
+# 2.5.3 卡池更新至煌
 
 
 __author__ = 'ietar'
@@ -15,11 +19,12 @@ __version__ = '2.4'
 
 import random
 
-Official6 = ['推进之王', '能天使', '星熊', '闪灵', '伊芙利特', '银灰', '塞雷娅', '夜莺', '艾雅法拉', '陈', '安洁莉娜', '斯卡蒂', '黑']
+Official6 = ['推进之王', '能天使', '星熊', '闪灵', '伊芙利特', '银灰', '塞雷娅', '夜莺', '艾雅法拉', '陈', '安洁莉娜', '斯卡蒂', '黑', '赫拉格', '麦哲伦', '莫斯提马', '煌']
 Official5 = ['白面鸮', '幽灵鲨', '芙兰卡', '德克萨斯', '凛冬', '普罗旺斯', '蓝毒', '雷蛇', '临光', '红', '赫默', '夜魔', '天火', '初雪', '拉普兰德', '华法琳',
-             '守林人', '狮蝎', '真理', '白金', '陨星', '梅尔', '可颂', '崖心', '空', '食铁兽', '诗怀雅', '锡兰', '格劳克斯']
+             '守林人', '狮蝎', '真理', '白金', '陨星', '梅尔', '可颂', '崖心', '空', '食铁兽', '诗怀雅', '锡兰', '格劳克斯', '星极', '炎客', '送葬人', '微风',
+             '拜松', '槐琥', '苇草', '布洛卡', '灰喉']
 Official4 = ['杜宾', '深海色', '白雪', '远山', '夜烟', '流星', '蛇屠箱', '末药', '猎蜂', '慕斯', '砾', '暗索', '地灵', '调香师', '霜叶', '清道夫', '角峰',
-             '古米', '缠丸', '阿消', '红豆', '杰西卡', '苏苏洛']
+             '古米', '缠丸', '阿消', '红豆', '杰西卡', '苏苏洛', '桃金娘', '坚雷', '红云', '伊桑', '安比尔']
 Official3 = ['芬', '克洛丝', '炎熔', '米格鲁', '芙蓉', '卡缇', '史都华德', '香草', '玫兰莎', '安赛尔', '梓兰', '翎羽', '空爆', '月见夜']
 
 
@@ -61,17 +66,19 @@ def checkpool(pool):
 
     for i in current:
         if current[i] > 1:
-            return 0
+            return False
 
-    return 1
+    return current
 
 
 def set_uprate(pool, name, uprate):
-    """自定义池子 修改干员up率 重复调用可修改多个 注意每个星级up率之和不能超过1"""
+    """
+    自定义池子 修改干员up率 重复调用可修改多个 注意每个星级up率之和不能超过1
+    成功修改返回1 否则返回-1
+    """
 
     if uprate > 1 or uprate < 0:
         raise ValueError('up率必须在0-1之间!')
-    current = {3: 0, 4: 0, 5: 0, 6: 0}
     stars = 0
     flag = 0
     temp = None
@@ -83,25 +90,18 @@ def set_uprate(pool, name, uprate):
             break
 
     if not flag:
-        raise ValueError('池子中找不到该干员,无法修改up率!')
+        print('池子中找不到该干员,无法修改up率!')
+        return -1
 
     assert stars != 0
 
-    for i in pool:
-        if i.stars == 6:
-            current[6] += i.uprate
-        if i.stars == 5:
-            current[5] += i.uprate
-        if i.stars == 4:
-            current[4] += i.uprate
-        if i.stars == 3:
-            current[3] += i.uprate
-
-    after_update = uprate - temp.uprate + current[stars]
-    if after_update > 1:
-        raise ValueError('up率设置过高, 当前{}星up率之和为{}'.format(stars, current[stars]))
-
-    temp.uprate = uprate
+    current = checkpool(pool)
+    if not current:
+        print('up率设置过高, 当前{}星up率之和为{}'.format(stars, current[stars]))
+        return -1
+    else:
+        temp.uprate = uprate
+        return 1
 
 
 class Official(object):
@@ -176,14 +176,15 @@ STANDARD_POOL = makepool()
 
 
 class Draw(object):
-    def __init__(self):
+    """默认使用全干员无up池 参数pool可自定义池子"""
+    def __init__(self, pool=None):
         self.count_no_6 = 0
         self.count_no_5 = 0
         self.debug = False
+        self.pool = pool or STANDARD_POOL
 
-    def draw(self, times=1, pool=None):
-        if pool is None:
-            pool = STANDARD_POOL
+    def draw(self, times=1):
+        pool = self.pool
         pool6 = {}
         pool5 = {}
         pool4 = {}
@@ -291,7 +292,7 @@ class Draw(object):
         # 保底考虑直接重抽10次 只在10连抽时触发
         if times == 10 and not (count6 + count5 + count4):
             # print("保底机制使您免收紫气东来困扰 1次")
-            return self.draw(10, pool)
+            return self.draw(times=10)
         else:
             self.count_no_5 += temp5
             self.count_no_6 += temp6
@@ -323,7 +324,7 @@ if __name__ == '__main__':
                 print("亲亲建议您输入0-1000的数量呢(呕)")
                 continue
             print('\n')
-            print(d.draw(numbers, STANDARD_POOL), '\n')
+            print(d.draw(times=numbers), '\n')
     else:
         d.debug = True
         print(d.draw())
