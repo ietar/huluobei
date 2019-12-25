@@ -27,15 +27,11 @@ function f3(){
 }
 $(function () {
     let buttons = $('div.header>div.container>div');
-    console.log('here:', buttons);
-    console.log('this:', buttons.find('div'));
-    console.log('target:', $('div.works'));
     buttons.mouseenter(function () {
-        console.log('trying:', $(this).find('div'));
         $(this).find('div').slideDown(300);
     })
     buttons.mouseleave(function () {
         console.log('trying:', $(this).find('div'));
-        $(this).find('div').slideUp(200);
+        $(this).find('div').slideUp(100);
     })
 });
