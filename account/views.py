@@ -88,8 +88,8 @@ def registed(request):
 
 
 def index(request):
-    ip = get_ip.get_ip(request)
-    print(ip)
+    # ip = get_ip.get_ip(request)
+    # print(ip)
     counts = len(User.objects.raw('select * from account_user;'))
     try:
         user = request.session['user']

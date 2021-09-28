@@ -1,8 +1,9 @@
-function check(){
+function pw_check(){
     if (document.getElementsByName('password')[0].value !== document.getElementsByName('repassword')[0].value) {
         alert("您两次输入的密码不一样！请重新输入.");
+    // if (usercheck() === 0 || emailcheck() === 0){
         document.getElementById("submit").disabled = true;
-        document.getElementsByName('repassword').focus();
+        // document.getElementsByName('repassword').focus();
     }
     else{
         document.getElementById("submit").disabled = false;
@@ -55,8 +56,8 @@ function emailcheck(){
             if (xhr.status === 200 || xhr.status === 304){
                 var ret = JSON.parse(xhr.responseText);
                 if (ret.email){
-                    emailinfo.innerHTML = '× 邮箱重复';
-                    emailinfo.style.color = 'red';
+                    emailinfo.innerHTML = '! 邮箱重复 建议重新填写';
+                    emailinfo.style.color = 'orange';
                     return 0;
                 }
                 else{
