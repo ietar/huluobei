@@ -10,6 +10,7 @@ class User(models.Model):
     salt = models.CharField(max_length=20, null=True)
     regist_time = models.CharField(max_length=32, null=True)
     access_time = models.CharField(max_length=32, null=True)
+    access_ip = models.CharField(max_length=32, default='')
     reset_password_salt = models.CharField(max_length=64, null=True, blank=True)
     reset_time = models.DateTimeField(null=True)
 

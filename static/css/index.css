@@ -42,7 +42,8 @@ div.userinfo{
     padding: 0.3rem;
     text-align: center;
     width: 30rem;
-    height: 18rem;
+    /*height: 18rem;*/
+    height: auto;
     border:1px dashed;
     z-index:2;
 }

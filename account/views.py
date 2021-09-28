@@ -113,9 +113,11 @@ def index(request):
         'email': user['email'],
         'img': u.img,
         'counts': counts,
-        'atime': u.access_time,
+        'atime': str(u.access_time).split('.')[0],
+        'ip': u.access_ip
     }
     u.access_time = datetime.datetime.now()
+    u.access_ip = get_ip.get_ip(request)
     u.save()
     return render(request, 'account/index.html', data)
 
