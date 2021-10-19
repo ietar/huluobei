@@ -1,3 +1,49 @@
+function resize(designWidth, maxWidth) {
+	let doc = document,
+	win = window,
+	docEl = doc.documentElement,
+	remStyle = document.createElement("style"),
+	tid;
+
+	function refreshRem() {
+		let width = docEl.getBoundingClientRect().width;
+		maxWidth = maxWidth || 1920;
+		width>maxWidth && (width=maxWidth);
+
+		let rem0 = docEl.clientWidth;
+		console.log(rem0, docEl.clientHeight, docEl.style.fontSize);
+		let rem = width * 15 / designWidth;
+		remStyle.innerHTML = 'html{font-size:' + rem + 'px;}';
+	}
+
+	if (docEl.firstElementChild) {
+		docEl.firstElementChild.appendChild(remStyle);
+	} else {
+		let wrap = doc.createElement("div");
+		wrap.appendChild(remStyle);
+		doc.write(wrap.innerHTML);
+		wrap = null;
+	}
+	//要等 viewport 设置好后才能执行 refreshRem，不然 refreshRem 会执行2次；
+	refreshRem();
+
+	win.addEventListener("resize", function() {
+		clearTimeout(tid); //防止执行两次
+		tid = setTimeout(refreshRem, 300);
+	}, false);
+
+	win.addEventListener("pageshow", function(e) {
+		if (e.persisted) { // 浏览器后退的时候重新计算
+			clearTimeout(tid);
+			tid = setTimeout(refreshRem, 300);
+		}
+	}, false);
+
+}
+
+$(document).ready(resize(1920, 1920));
+
+
 function f1(){
     let form = document.getElementById('drawcards');
     let fd = new FormData(form);
