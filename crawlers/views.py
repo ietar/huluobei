@@ -1,12 +1,40 @@
 from django.http import HttpResponse
+from django.shortcuts import render
+
+from account.models import User
 from crawlers.models import Book, BookContent
 from crawlers import biqooge
 from django.utils import timezone
+import typing
 # Create your views here.
 
 
+ret_u = typing.TypeVar('ret_u', bool, User)
+
+
+def login_check(request) -> ret_u:
+    try:
+        user = request.session['user']
+    except KeyError:
+        # 没这个键
+        return False
+    u = User.objects.filter(username__exact=user['username'])
+    if len(u) == 1:
+        u = u[0]
+    else:
+        # 查不着
+        request.session.clear()
+        return False
+
+    return u
+
+
 def get_chapter(request):
-    # 获取简介
+    # 获取简介 自用
+    u = login_check(request)
+    if u.username != 'ietar':
+        return HttpResponse('别动这个 叫ietar来')
+
     try:
         book_id = request.GET['id']
     except KeyError:
@@ -32,7 +60,11 @@ def get_chapter(request):
 
 
 def get_content(request):
-    # 爬内容了
+    # 爬内容了 自用
+    u = login_check(request)
+    if u.username != 'ietar':
+        return HttpResponse('别动这个 叫ietar来')
+
     try:
         book_id = request.GET['id']
     except KeyError:
@@ -78,3 +110,90 @@ def get_content(request):
         r = f'已爬取 {count} 章,当前待爬取章节数为 {book.current}'
         print(r)
     return HttpResponse(r)
+
+
+def book(request):
+    # 目录
+    data = {'book_name': 0}
+    u = login_check(request)
+    if u:
+        data.update({'username': u.username, 'user_img': u.img})
+    url = request.path
+    if not url.endswith(r'/'):
+        url += '/'
+
+    book_id = int(url.split('/')[-2])
+    books = Book.objects.filter(book_id=book_id)
+    if len(books) == 0:
+        return render(request, 'crawlers/book.html', data)
+    else:
+        book1 = books[0]
+        sets = BookContent.objects.filter(book_name_id=book_id)
+        chapters = [x.chapter for x in sets]
+        data = {
+            'book_id': book1.book_id,
+            'book_name': book1.book_name,
+            'author': book1.author,
+            'digest': book1.digest,
+            'read_count': book1.read_count,
+            'collect_count': book1.collect_count,
+            'current': book1.current,
+            'chapters': chapters,
+        }
+
+        # print(data)
+
+        return render(request, 'crawlers/book.html', data)
+
+
+def books(request):
+    data = {}
+    u = login_check(request)
+    if u:
+        data.update({'username': u.username, 'user_img': u.img})
+    all_books = Book.objects.all()
+    ret = [[x.book_name, x.book_id] for x in all_books]
+    data.update({
+        'ret': ret,
+    })
+    print(data)
+    return render(request, 'crawlers/books.html', data)
+
+
+def book_content(request):
+    data = {'content': ''}
+    u = login_check(request)
+    if u:
+        data.update({'username': u.username, 'user_img': u.img})
+
+    url = request.path
+    if not url.endswith(r'/'):
+        url += '/'
+    book_id = int(url.split('/')[-3])
+    chapter = int(url.split('/')[-2])
+
+    contents = BookContent.objects.filter(book_name_id=book_id, chapter_count=chapter)
+    book1 = Book.objects.get(book_id=book_id)
+    data.update({
+        'book_id': book_id,
+        'book_name': book1.book_name,
+        'chapter_count': chapter,
+    })
+    if len(contents) == 0:
+        return render(request, 'crawlers/content.html', data)
+    else:
+        content = contents[0]
+        data.update({
+            'chapter': content.chapter,
+            'chapter_count': content.chapter_count,
+            'content': content.content,
+            'collect_count': content.collect_count,
+            'read_count': content.read_count,
+        })
+
+        content.read_count += 1
+        content.save()
+        book1.read_count += 1
+        book1.save()
+
+        return render(request, 'crawlers/content.html', data)

@@ -8,6 +8,8 @@ class Book(models.Model):
     author = models.CharField(max_length=32)
     digest = models.TextField()
     current = models.IntegerField()
+    read_count = models.IntegerField(default=0)  # 点击
+    collect_count = models.IntegerField(default=0)  # 收藏
 
 
 class BookContent(models.Model):

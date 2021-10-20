@@ -119,6 +119,7 @@ def index(request):
     u.access_time = datetime.datetime.now()
     u.access_ip = get_ip.get_ip(request)
     u.save()
+    # print(data)
     return render(request, 'account/index.html', data)
 
 

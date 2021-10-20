@@ -40,8 +40,8 @@ div.userinfo{
     padding: 0.3rem;
     text-align: center;
     width: 30rem;
-    /*height: 18rem;*/
-    height: auto;
+    height: 18rem;
+    /*height: auto;*/
     border:1px dashed;
     z-index:2;
 }
@@ -77,10 +77,31 @@ div.sweets{
     top:4rem;
 }
 div.bei_an{
-    position:absolute;
+    position:relative;
     width: 20rem;
     bottom: 0;
     left: 50%;
     margin-left: -10rem;
     text-align: center;
+}
+div.go_to_read{
+    text-align: center;
+    font-size: 3rem;
+    letter-spacing: 1rem;
+}
+div.go_to_read>a{
+    text-decoration: none;
+    /*color: #000000;*/
+}
+div.go_to_read>a:visited{
+    text-decoration: none;
+    /*color: #000000;*/
+}
+div.go_to_read>a:hover{
+    text-decoration: none;
+    /*color: #000000;*/
+}
+div.go_to_read>a:active{
+    text-decoration: none;
+    /*color: #000000;*/
 }
