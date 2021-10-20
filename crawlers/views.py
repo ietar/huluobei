@@ -1,3 +1,7 @@
+# import logging
+import time
+# from threading import Lock
+
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -39,6 +43,12 @@ def get_chapter(request):
         book_id = request.GET['id']
     except KeyError:
         book_id = 1
+
+    try:
+        prefix = request.GET['prefix']
+    except KeyError:
+        prefix = 0
+
     # ids = Book.objects.all()
     # print(len(ids))
     qset = Book.objects.filter(book_id=book_id)
@@ -49,7 +59,7 @@ def get_chapter(request):
     else:
         current_chapter = 1
         try:
-            name, author, digest = biqooge.get_a_chapter(book_id=book_id)
+            name, author, digest = biqooge.get_a_chapter(book_id=book_id, prefix=prefix)
         except IndexError:
             return HttpResponse('该书不存在')
         new_book = Book.objects.create(
@@ -61,34 +71,45 @@ def get_chapter(request):
 
 def get_content(request):
     # 爬内容了 自用
+    # lock = Lock()
+    # lock.acquire()
+    # time.sleep(5)
+    # lock.release()
+    # return HttpResponse('lock')
     u = login_check(request)
     if u.username != 'ietar':
         return HttpResponse('别动这个 叫ietar来')
+    get_dict = request.GET
+    # print(get_dict, dir(get_dict))
+    if not get_dict:
+        return HttpResponse('id(book_id), prefix(biqooge的url prefix_book_id), target(爬几章)')
 
+    book_id = get_dict.get('id') or 1
+    prefix = get_dict.get('prefix') or 0
     try:
-        book_id = request.GET['id']
-    except KeyError:
-        book_id = 1
-
-    try:
-        target = int(request.GET['target'])
-    except KeyError:
-        target = 1
+        target = int(get_dict.get('target')) or 1
     except ValueError:
         return HttpResponse('target(爬取章节数)必须为整数')
+    t1 = time.time()
 
     # print(f'book_id, count {book_id, target}')
     qset = Book.objects.filter(book_id=book_id)
     if len(qset) != 0:
         # 已有
-        book = qset[0]
+        book1 = qset[0]
         current_chapter = qset[0].current
     else:
         # current_chapter = 1
         return HttpResponse('还没这本书的简介 先去get_chapter')
 
+    if book1.using:
+        return HttpResponse('该书内容写入中 稍后再试')
+    else:
+        book1.using = True
+        book1.save()
+
     chapters = biqooge.get_chapters(
-        book_id=book_id, current_chapter=current_chapter, chapter_count=target)
+        book_id=book_id, current_chapter=current_chapter, chapter_count=target, prefix=prefix)
     count = 0
     r = ''
     for chapter in chapters:
@@ -97,18 +118,20 @@ def get_content(request):
         url = biqooge.root_url + url1
         content = biqooge.get_content(content_url=url)
         new_content = BookContent.objects.create(
-            book_name=book,
-            chapter_count=book.current,
+            book_name=book1,
+            chapter_count=book1.current,
             chapter=chapter_name,
             content=content,
             update_time=timezone.now()
         )
         new_content.save()
         count += 1
-        book.current = book.current + 1
-        book.save()
-        r = f'已爬取 {count} 章,当前待爬取章节数为 {book.current}'
+        book1.current = book1.current + 1
+        book1.using = False
+        book1.save()
+        r = f'已爬取 {count} 章,当前待爬取章节数为 {book1.current}, 用时{round(time.time()-t1,2)}秒'
         print(r)
+        # logging.info(r)
     return HttpResponse(r)
 
 

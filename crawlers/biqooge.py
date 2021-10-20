@@ -23,33 +23,22 @@ def get_content(content_url: str) -> str:
     return content
 
 
-def get_chapters(book_id: int, current_chapter: int, chapter_count: int):
-    # todo
-    url_chapters = root_url + '0_' + str(book_id) + r'/'
+def get_chapters(book_id: int, current_chapter: int, chapter_count: int, prefix=0):
+    # 获取章节列表
+    url_chapters = root_url + f'{prefix}_' + str(book_id) + r'/'
     response = requests.get(url_chapters, headers=headers)
     content = response.content
-    # print(content[:256])
     soup = BeautifulSoup(content, features="html.parser")
     begin = 8 + current_chapter
     end = 8 + current_chapter + chapter_count
-    # print(soup.prettify())
-    # author = soup.select('#maininfo>#info>h1')[0].text.strip()
-    # intro = soup.select('#maininfo>#intro>p')[0].text.strip()
-    # print(author, intro)
 
-    # chapters = soup.select('.box_con>#list>dl>dd')[9:]
     chapters = soup.select('.box_con>#list>dl>dd')[begin:end]
     return chapters
 
-    # for chapter in chapters:
-    #     chapter_name = chapter.a.text.strip()
-    #     url1 = chapter.a['href']
-    #     url = root_url + url1
-    #     content = get_content(content_url=url)
 
-
-def get_a_chapter(book_id: int):
-    url_chapters = root_url + '0_' + str(book_id) + r'/'
+def get_a_chapter(book_id: int, prefix=0) -> (str, str,str):
+    # 获取简介
+    url_chapters = root_url + f'{prefix}_' + str(book_id) + r'/'
     response = requests.get(url_chapters, headers=headers)
     content = response.content
     soup = BeautifulSoup(content, features="html.parser")

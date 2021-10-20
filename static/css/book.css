@@ -39,7 +39,7 @@ div.content_footer{
     margin-top: 3rem;
 }
 div.book_content_info, div.content{
-    border: 2px solid #88C6E5;
+    border: 1px solid #88C6E5;
     margin:3rem 0;
 }
 span.arrow{
@@ -60,5 +60,10 @@ div.books{
 }
 div.where_am_i{
     text-indent:1rem;
+}
+div.content{
+    font-size: 1.2rem;
+    letter-spacing: 0.2rem;
+    line-height: 150%;
 }
 

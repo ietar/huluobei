@@ -10,6 +10,7 @@ class Book(models.Model):
     current = models.IntegerField()
     read_count = models.IntegerField(default=0)  # 点击
     collect_count = models.IntegerField(default=0)  # 收藏
+    using = models.BooleanField(default=False)  # 是否写入中
 
 
 class BookContent(models.Model):
