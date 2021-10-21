@@ -36,11 +36,15 @@ div.content_footer>span{
 div.content_footer{
     display: flex;
     justify-content: center;
-    margin-top: 3rem;
+    align-items: center;
 }
-div.book_content_info, div.content{
+div.content_wrapper{
+    justify-content: center;
+    align-items: center;
+}
+div.content_wrapper>div{
+    padding:1rem 0;
     border: 1px solid #88C6E5;
-    margin:3rem 0;
 }
 span.arrow{
     margin:0 1rem;

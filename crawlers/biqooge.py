@@ -50,4 +50,3 @@ def get_a_chapter(book_id: int, prefix=0) -> (str, str,str):
 
     return book_name, author, digest
 
-

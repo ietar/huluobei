@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/css/book.css">
     <script type="text/javascript" src="/static/js/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="/static/js/index.js/"></script>
+    <script type="text/javascript" src="/static/js/user_collections.js/"></script>
 </head>
 <body>
     <div class="header clearfix">
@@ -72,11 +73,22 @@
         </div>
         <div class="books">
             <dl>
-                {% for book in ret %}
+                {% for book in all_books %}
                     <dd class="single_book"><a href="/book/{{book.1}}/">《{{book.0}}》</a></dd>
                 {% endfor %}
             </dl>
 
+        </div>
+        <div class="collections">
+            <dl>
+                <dt>我的收藏夹:</dt>
+                {% for collect in collections %}
+                    <dd class="single_collection">
+                        <a href="/book/{{collect.book_id}}/{{collect.chapter_count}}">《{{collect.book_name}}》  {{collect.chapter}}</a>
+                        <a id="collect_{{forloop.counter0}}" href="javascript:void(0)" onclick="delete_collections('{{username}}', '{{collect.book_id}}', '{{collect.chapter_count}}')">移出收藏夹</a>
+                    </dd>
+                {% endfor %}
+            </dl>
         </div>
 
     </div>

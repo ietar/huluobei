@@ -10,6 +10,7 @@ from crawlers.models import Book, BookContent
 from crawlers import biqooge
 from django.utils import timezone
 import typing
+import json
 # Create your views here.
 
 
@@ -175,11 +176,14 @@ def books(request):
     if u:
         data.update({'username': u.username, 'user_img': u.img})
     all_books = Book.objects.all()
-    ret = [[x.book_name, x.book_id] for x in all_books]
+    all_books = [[x.book_name, x.book_id] for x in all_books]
+    user_collections = json.loads(u.collections)
     data.update({
-        'ret': ret,
+        'all_books': all_books,
+        'collections': user_collections,
     })
-    print(data)
+
+    # print(data)
     return render(request, 'crawlers/books.html', data)
 
 

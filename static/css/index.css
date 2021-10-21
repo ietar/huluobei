@@ -46,7 +46,7 @@ div.userinfo{
     z-index:2;
 }
 div.userinfo>img{
-    border:1px dotted orangered;
+    border:1px dotted #FF4500;
     cursor: pointer;
     width: 8rem;
     height: 8rem;
@@ -91,17 +91,13 @@ div.go_to_read{
 }
 div.go_to_read>a{
     text-decoration: none;
-    /*color: #000000;*/
 }
 div.go_to_read>a:visited{
     text-decoration: none;
-    /*color: #000000;*/
 }
 div.go_to_read>a:hover{
     text-decoration: none;
-    /*color: #000000;*/
 }
 div.go_to_read>a:active{
     text-decoration: none;
-    /*color: #000000;*/
 }

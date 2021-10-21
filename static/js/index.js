@@ -11,7 +11,7 @@ function resize(designWidth, maxWidth) {
 		width>maxWidth && (width=maxWidth);
 
 		let rem0 = docEl.clientWidth;
-		console.log(rem0, docEl.clientHeight, docEl.style.fontSize);
+		// console.log(rem0, docEl.clientHeight, docEl.style.fontSize);
 		let rem = width * 15 / designWidth;
 		remStyle.innerHTML = 'html{font-size:' + rem + 'px;}';
 	}
@@ -77,7 +77,7 @@ $(function () {
         $(this).find('div').slideDown(300);
     })
     buttons.mouseleave(function () {
-        console.log('trying:', $(this).find('div'));
+        // console.log('trying:', $(this).find('div'));
         $(this).find('div').slideUp(100);
     })
 });

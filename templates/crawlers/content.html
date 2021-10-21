@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/static/css/book.css">
     <script type="text/javascript" src="/static/js/jquery-3.4.1.min.js"></script>
     <script type="text/javascript" src="/static/js/index.js/"></script>
+    <script type="text/javascript" src="/static/js/user_collections.js/"></script>
 </head>
 <body>
     <div class="header clearfix">
@@ -74,7 +75,8 @@
             <span class="arrow">--></span>
             <a href="/book/{{book_id}}/">《{{book_name}}》</a>
             <span class="arrow">--></span><span>{{chapter}}</span>
-        <div>
+        </div>
+        <div class="content_wrapper">
             {% if content %}
             <div class="book_content_info">
                 <div class="book_name"><h1>《{{book_name}}》</h1></div>
@@ -88,15 +90,15 @@
                 <div>找不到该章节</div>
                 <script>document.title="找不到该章节";</script>
             {% endif %}
-        </div>
-        <div class="content_footer">
-            <a href="/book/{{book_id}}/{{chapter_count|add:-1}}">前一章</a>
-            <a href="/book/{{book_id}}">回目录</a>
-            <a href="/book/{{book_id}}/{{chapter_count|add:1}}">后一章</a>
-            <span>收藏 </span>
-            <!--                todo                -->
-        </div>
 
+            <div class="content_footer">
+                <a href="/book/{{book_id}}/{{chapter_count|add:-1}}">前一章</a>
+                <a href="/book/{{book_id}}">回目录</a>
+                <a href="/book/{{book_id}}/{{chapter_count|add:1}}">后一章</a>
+                <a href="javascript:void(0);" onclick=add_collections('{{username}}')>收藏 </a>
+                <!--                todo                -->
+            </div>
+        </div>
     </div>
 
     <div class="sweets">
