@@ -22,3 +22,11 @@ class BookContent(models.Model):
     read_count = models.IntegerField(default=0)  # 点击
     update_time = models.DateTimeField()
 
+
+class Comment(models.Model):
+    book_id = models.IntegerField()
+    chapter_count = models.IntegerField()
+    user_name = models.CharField(max_length=20, default='匿名朋友')
+    comment = models.TextField()
+    ts = models.DateTimeField()
+    agree = models.IntegerField(default=0)  # 点赞数

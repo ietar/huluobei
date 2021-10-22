@@ -99,6 +99,34 @@
                 <!--                todo                -->
             </div>
         </div>
+        <div class="comment_wrapper">
+            <h3 class="comment_top">评论区</h3>
+            <div class="comments">
+                {% for comment in comments %}
+                    <div class="comment" id="{{comment.id}}">
+                        <div class="comment_user_name">{{comment.user_name}}</div>
+                        <div class="comment_comment">{{comment.comment}}</div>
+                        <span class="comment_ts">评论时间: {{comment.ts}}</span>
+
+                        <span class="agree_span">
+                        <!--todo-->
+                            <a href="javascript:void(0)" class="agree" onclick="console.log('{{comment.id}}')">赞个</a>
+                            <span class="comment_agree">{{comment.agree}}</span>
+                            <a href="javascript:void(0)" class="disagree" onclick="console.log('{{comment.id}}')">反对</a>
+                        </span>
+
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="add_comment">
+                <label>
+                    <textarea id="input_comment" cols="30" rows="4"></textarea>
+                </label>
+                <span>署名:</span>
+                <input type="text" id="input_comment_user_name" placeholder="{{username}}">
+                <a href="javascript:void(0)" class="add_comment" onclick="add_comment('{{book_id}}', '{{chapter_count}}');">提交</a>
+            </div>
+        </div>
     </div>
 
     <div class="sweets">

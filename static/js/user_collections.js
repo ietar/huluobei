@@ -29,3 +29,21 @@ function delete_collections(user, book_id, chapter_count){
         dataType: 'json'
     })
 }
+
+function add_comment(book_id, chapter_count){
+    let user = $('input#input_comment_user_name').val()
+    let comment = $('textarea#input_comment').val();
+    let url = `http://127.0.0.1/api/comment/${book_id}/${chapter_count}`;
+    // console.log(user, book_id, chapter_count, comment);
+    $.ajax({
+        url:url,
+        data: {'u': user, 'comment': comment},
+        success: function(result){if (check_result(result)){alert('提交评论成功')}else{alert(result['msg']);}location.reload();},
+        type: 'post',
+        dataType: 'json'
+    })
+}
+
+function check_result(result){
+    return result['result']
+}

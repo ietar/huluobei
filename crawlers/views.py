@@ -6,7 +6,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 
 from account.models import User
-from crawlers.models import Book, BookContent
+from crawlers.models import Book, BookContent, Comment
 from crawlers import biqooge
 from django.utils import timezone
 import typing
@@ -222,9 +222,24 @@ def book_content(request):
             'read_count': content.read_count,
         })
 
+        data['comments'] = []
+        comments = Comment.objects.filter(book_id=book_id, chapter_count=chapter)
+        for comment in comments:
+            temp = {
+                'id': comment.id,
+                'book_id': comment.book_id,
+                'chapter_count': comment.chapter_count,
+                'user_name': comment.user_name,
+                'comment': comment.comment,
+                'ts': comment.ts,
+                'agree': comment.agree,
+            }
+            data['comments'].append(temp)
+
         content.read_count += 1
         content.save()
         book1.read_count += 1
         book1.save()
+        # print(data['comments'])
 
         return render(request, 'crawlers/content.html', data)

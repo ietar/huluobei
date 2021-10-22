@@ -15,4 +15,4 @@ class User(models.Model):
     reset_time = models.DateTimeField(null=True)
     collections = models.TextField(default="[]")
     # 收藏详情 json [{'book_id':0,'book_name':'','chapter_count':'','chapter': '', 'ts':0}]
-
+    comments = models.IntegerField(default=0)  # 评论数

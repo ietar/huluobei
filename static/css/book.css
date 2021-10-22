@@ -71,4 +71,25 @@ div.content{
     letter-spacing: 0.2rem;
     line-height: 150%;
 }
+textarea.input_comment{
+    border: 1px solid #e0c19e;
+    border-radius: 0.1rem;
+}
+
+a.agree, a.disagree{
+    display: inline;
+}
+
+h3.comment_top{
+    text-align: left;
+}
+div.comment{
+    border:1px solid #7A9FE0;
+    margin-top: 0.5rem;
+    width:40%
+}
+span.comment_ts, span.agree_span, div.comment_user_name{
+    font-size: 0.5rem;
+}
+
 
