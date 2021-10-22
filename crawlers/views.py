@@ -175,9 +175,13 @@ def books(request):
     u = login_check(request)
     if u:
         data.update({'username': u.username, 'user_img': u.img})
+        user_collections = json.loads(u.collections)
+    else:
+        user_collections = []
+
     all_books = Book.objects.all()
     all_books = [[x.book_name, x.book_id] for x in all_books]
-    user_collections = json.loads(u.collections)
+
     data.update({
         'all_books': all_books,
         'collections': user_collections,

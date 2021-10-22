@@ -1,4 +1,5 @@
 function add_collections(username){
+    if (!username){alert('未登陆');return false;}
     let u = document.URL;
     if (u.endsWith('/') === false) {
         u = u+'/';
@@ -13,7 +14,8 @@ function add_collections(username){
         alert(data['msg']);
         // console.log(status, data);
         },
-        'json' )
+        'json' );
+    return true;
 }
 
 function delete_collections(user, book_id, chapter_count){
