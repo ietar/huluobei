@@ -1,7 +1,7 @@
 from django.conf.urls.static import static
 from django.urls import re_path
 from account import views
-from zhihu_django import settings
+from huluobei import settings
 
 urlpatterns = [
     re_path(r'login/$', views.login),

@@ -1,7 +1,7 @@
 # from django.conf.urls.static import static
 from django.urls import re_path
 from api import views
-# from zhihu_django import settings
+# from huluobei import settings
 
 urlpatterns = [
     re_path(r'^user_collections$', views.user_collections),

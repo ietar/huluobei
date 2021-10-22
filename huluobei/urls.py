@@ -1,4 +1,4 @@
-"""zhihu_django URL Configuration
+"""huluobei URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/2.2/topics/http/urls/
@@ -20,7 +20,7 @@ from django.urls import path, re_path, include
 from django.views.generic import RedirectView
 
 from account import views
-from zhihu_django import settings
+from huluobei import settings
 from crawlers import urls as crawler_urls
 
 urlpatterns = [
