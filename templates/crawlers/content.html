@@ -52,7 +52,7 @@
             </div>
 
             {% if username %}
-                <div style="display:inline-flex;position:absolute;right:0;align-items:center;justify-content: center">
+                <div style="display:inline-flex;position:absolute;right:0;align-items:center;justify-content: center;width:auto;">
                     <img style="display:inline" alt="头像" src="/media/{{user_img}}/" onclick="upload()" height=30px>
                     <span style="display:inline;margin:0 0.5rem">{{username}}</span>
                     <span style="display:inline"><a href="/account/logout/">退出</a></span>
@@ -60,7 +60,7 @@
 
 
             {% else %}
-                <div style="display:inline-block;position:absolute;right:0;">
+                <div style="display:inline-block;position:absolute;right:0;width:auto;">
                     <span style="display:inline">未登陆</span> <a style="display:inline" href="/account/login/">登陆</a> <a style="display:inline" href="/account/regist/">注册</a>
                 </div>
             {% endif %}

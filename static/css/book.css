@@ -34,6 +34,7 @@ div.content_footer>span{
     margin:0 3rem;
 }
 div.content_footer{
+    font-size: 1rem;
     display: flex;
     justify-content: center;
     align-items: center;
