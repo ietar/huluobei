@@ -196,7 +196,7 @@ def sendresetmail(request):
         # ip = get_ip.get_ip(request)
         temp = str(random.randint(1, 100000)) + random.choice(username) + random.choice(username)
         u.reset_password_salt = hmac.new(key=bytes(temp, encoding='utf-8'),
-                                         msg=bytes(str(datetime.datetime.now()), encoding='utf-8'),
+                                         msg=bytes(str(username+datetime.datetime.now()), encoding='utf-8'),
                                          digestmod='MD5').hexdigest()
         temp = u.reset_password_salt
         u.reset_time = datetime.datetime.now()
@@ -247,7 +247,9 @@ def reset(request):
             'email': u.email,
             'img': str(u.img),
         }
-    return render(request, r'account/reset.html', data)
+        return render(request, r'account/reset.html', data)
+    else:
+        return JsonResponse({'status': 401, 'msg': 'Unauthorized'}, status=401)
 
 
 def reset_done(request):

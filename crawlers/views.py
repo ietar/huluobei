@@ -147,14 +147,18 @@ def book(request):
         url += '/'
 
     book_id = int(url.split('/')[-2])
-    books = Book.objects.filter(book_id=book_id)
-    if len(books) == 0:
+    try:
+        book1 = Book.objects.get(book_id=book_id)
+    except Book.DoesNotExist:
         return render(request, 'crawlers/book.html', data)
+    # books = Book.objects.filter(book_id=book_id)
+    # if len(books) == 0:
+    #     return render(request, 'crawlers/book.html', data)
     else:
-        book1 = books[0]
+        # book1 = books[0]
         sets = BookContent.objects.filter(book_name_id=book_id)
         chapters = [x.chapter for x in sets]
-        data = {
+        data.update({
             'book_id': book1.book_id,
             'book_name': book1.book_name,
             'author': book1.author,
@@ -163,7 +167,7 @@ def book(request):
             'collect_count': book1.collect_count,
             'current': book1.current,
             'chapters': chapters,
-        }
+        })
 
         # print(data)
 
