@@ -3,8 +3,6 @@
 /.idea/*
 /venv/
 */migrations/*
-
 1.cmd
-
 .idea/misc.xml
 .idea/zhihu_django.iml
