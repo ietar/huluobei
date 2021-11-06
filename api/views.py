@@ -448,7 +448,3 @@ class CommentApi(View):
             res['result'] = True
             res['msg'] = 'delete comment successfully'
             return JsonResponse(res)
-
-
-
-

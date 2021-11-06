@@ -28,6 +28,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path('account/', include('account.urls')),
     re_path('api/', include('api.urls')),
+    re_path('book_drf/', include('book_drf.urls')),
     re_path('ajax_test/$', views.ajax_test),
     re_path('index/$', views.index),
     re_path('shit/$', views.shit),

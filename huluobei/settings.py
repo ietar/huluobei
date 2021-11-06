@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'account',
     'crawlers',
     'api',
+    'rest_framework',
+    'book_drf'
 ]
 
 MIDDLEWARE = [
