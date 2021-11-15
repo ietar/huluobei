@@ -1,9 +1,11 @@
 from django.db import models
+from django.utils import timezone
 
 
 # Create your models here.
 class Book(models.Model):
     objects = models.Manager()
+
     book_id = models.IntegerField(primary_key=True)
     book_name = models.CharField(max_length=32)
     author = models.CharField(max_length=32)
@@ -15,6 +17,8 @@ class Book(models.Model):
 
 
 class BookContent(models.Model):
+    objects = models.Manager()
+
     book_name = models.ForeignKey(to=Book, on_delete=models.CASCADE)
     chapter_count = models.IntegerField()  # 章节数
     chapter = models.CharField(max_length=64)
@@ -25,9 +29,11 @@ class BookContent(models.Model):
 
 
 class Comment(models.Model):
+    objects = models.Manager()
+
     book_id = models.IntegerField()
     chapter_count = models.IntegerField()
     user_name = models.CharField(max_length=20, default='匿名朋友')
     comment = models.TextField()
-    ts = models.DateTimeField()
+    ts = models.DateTimeField(default=timezone.now)
     agree = models.IntegerField(default=0)  # 点赞数

@@ -145,3 +145,16 @@ SESSION_REDIS_PORT = 6379
 SESSION_REDIS_DB = 0
 SESSION_REDIS_PASSWORD = ''
 SESSION_REDIS_PREFIX = 'session'
+
+# APPEND_SLASH = False
+REST_FRAMEWORK = {
+    # 认证
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',  # 基本认证
+        'rest_framework.authentication.SessionAuthentication',  # session认证
+    ),
+    # 权限
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}

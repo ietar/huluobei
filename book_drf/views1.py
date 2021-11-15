@@ -1,20 +1,23 @@
 # -*- coding: utf-8 -*-
-from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView
-from django.shortcuts import render
-from django.views import View
+# from rest_framework.generics import ListAPIView, CreateAPIView, UpdateAPIView, RetrieveAPIView, DestroyAPIView
+# from django.shortcuts import render
+# from django.views import View
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from django.http import JsonResponse
 
-from crawlers.models import Book as Book_model, BookContent
+from crawlers.models import Book as Book_model
 from book_drf.serializer import BookSerializer
 
 
 # Create your views here.
-class Books(View):
+class Books(APIView):
     def get_res(self):
         temp = {'result': False, 'data': None, 'msg': ''}
         return dict(**temp)
 
     def get(self, request):
+        print(request.data, request.query_params)
         books = Book_model.objects.all()
         # c1 = BookContent.objects.get(id=1)
         # print(c1.book_name.book_name)
@@ -26,16 +29,21 @@ class Books(View):
         # print(contents)
 
         ser = BookSerializer(books, many=True)
-        return JsonResponse(ser.data, safe=False, json_dumps_params={
-            'ensure_ascii': False})
+        res = self.get_res()
+        res['data'] = ser.data
+
+        # return JsonResponse(ser.data, safe=False, json_dumps_params={
+        #     'ensure_ascii': False})
+        return Response(data=res)
 
 
-class Book(View):
+class Book(APIView):
     def get_res(self):
         temp = {'result': False, 'data': None, 'msg': ''}
         return dict(**temp)
 
     def get(self, request, book_id):
+        print(request.data, request.query_params)
         res = self.get_res()
         try:
             book1 = Book_model.objects.get(book_id=book_id)
@@ -49,5 +57,6 @@ class Book(View):
             return JsonResponse(res, json_dumps_params={
                 'ensure_ascii': False}, status=404)
 
-        return JsonResponse(res, json_dumps_params={
-            'ensure_ascii': False})
+        # return JsonResponse(res, json_dumps_params={
+        #     'ensure_ascii': False})
+        return Response(data=res)
