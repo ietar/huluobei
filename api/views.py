@@ -1,16 +1,92 @@
-import datetime
+# import datetime
+import json
+import logging
 import time
 
 # from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.views import View
+from django.conf import settings
+from django.core.cache import cache
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
 from django.http import QueryDict
 from django.utils import timezone
+from django.views import View
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from account.models import User
 from crawlers.models import Book, BookContent, Comment
-import json
+from utils.any import LoginRequiredJsonMixin
+from utils.default_data import n_data
 # Create your views here.
+from utils.serializer import SimpleModelSerializer
+
+logger = logging.getLogger('django')
+
+
+class UserView(LoginRequiredJsonMixin, APIView):
+    def get(self, request):
+        res = {'result': True, 'data': [], 'msg': ''}
+        user = request.user
+
+        if not user.is_superuser:
+            # 普通用户
+            res['data'] = SimpleModelSerializer(model=User, instance=user,
+                                                fields=('username', 'email', 'login_ip', 'last_login')).data
+        else:
+            dic = request.query_params.dict()
+            # admin
+            try:
+                if not dic:
+                    res['data'] = SimpleModelSerializer(model=User, instance=user,
+                                                        fields=('username', 'email', 'login_ip', 'last_login')).data
+                else:
+                    users = User.objects.filter(**dic)
+                    res['data'] = SimpleModelSerializer(model=User, instance=users,
+                                                        fields=('username', 'email', 'login_ip', 'last_login'),
+                                                        many=True).data
+            except Exception as e:
+                res['msg'] = f'{e}'
+                res['result'] = False
+        return Response(res)
+
+
+class UserExistView(APIView):
+    def get(self, request):
+        res = n_data()
+        username = request.query_params.get('username')
+        try:
+            User.objects.get(username=username)
+            res['result'] = False
+            res['msg'] = '用户名重复'
+            return Response(res)
+        except ObjectDoesNotExist:
+            return Response(res)
+
+
+class AnythingView(APIView):
+    """一切杂项都扔里 少发点请求吧"""
+
+    def get(self, request):
+        cached = cache.get('anything')
+        res = n_data()
+
+        try:
+            if not cached:
+                data = {
+                    # 'nonsense': 'nonsense',
+                    'search_place_holder': settings.__getattr__('ANYTHING').get('search_place_holder'),
+                }
+                cache.set('anything', data, 3600 * 24)
+            else:
+                data = cached
+            res['data'] = data
+        except Exception as e:
+            logger.error(f'{e}')
+            res['result'] = False
+            res['msg'] = f'server error: {e}'
+            return JsonResponse(res, status=500)
+        return JsonResponse(res)
 
 
 def user_collections(request):

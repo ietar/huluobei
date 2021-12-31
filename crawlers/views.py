@@ -197,8 +197,8 @@ def books(request):
 
 def book_content(request):
     data = {'content': ''}
-    u = login_check(request)
-    if u:
+    u = request.user
+    if u.is_authenticated:
         data.update({'username': u.username, 'user_img': u.img})
 
     url = request.path

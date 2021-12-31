@@ -3,8 +3,7 @@
 
 from rest_framework import serializers
 
-from goods.models import SKU
-from users.models import User, Address
+from account.models import User
 from utils.any import int2ip, list_sub
 
 
@@ -28,24 +27,6 @@ class SimpleModelSerializer(serializers.ModelSerializer):
         pass
 
 
-class CustomFieldModelSerializer(serializers.ModelSerializer):
-    """
-    可在使用时自定义fields 默认为__all__
-    serializer = CustomFieldModelSerializer(fields=(field1, field2,...))
-    """
-    def __init__(self, fields=None, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if isinstance(fields, str):
-            fields = (fields,)
-        # if fields:
-        #     self.Meta.fields = fields
-        self.Meta.fields = fields or '__all__'
-
-    class Meta:
-        model = SKU
-        fields = '__all__'
-
-
 class UserSerializer(serializers.ModelSerializer):
     """
     login_ip fixed readonly
@@ -61,18 +42,4 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = '__all__'
-
-
-class AddressSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Address
-        exclude = ['is_deleted']
-
-
-class SKUSerializer(CustomFieldModelSerializer):
-
-    class Meta:
-        model = SKU
         fields = '__all__'

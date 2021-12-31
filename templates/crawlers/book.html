@@ -79,7 +79,7 @@
             <dl class="chapter_top">
                 <dt>《{{book_name}}》章节目录:</dt>
                 {% for chapter in chapters %}
-                    <dd class="chapter" id={{forloop.counter}}><a href="/book/{{book_id}}/{{forloop.counter}}/">{{chapter}}</a></dd>
+                    <dd class="chapter" id={{loop.index}}><a href="/book/{{book_id}}/{{loop.index}}/">{{chapter}}</a></dd>
                 {% endfor %}
             </dl>
         {% else %}

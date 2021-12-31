@@ -1,131 +1,180 @@
 import datetime
+import random
+import hmac
+import re
+
+from django.conf import settings
+from django.contrib.auth import logout, login, authenticate
+from django.db import DatabaseError
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect
+from django.views import View
+from django_redis import get_redis_connection
+
 from account.models import User
-import hmac
-import random
+
 from ietar_py_scripts import sendmail, get_ip, draw_cards_arknight
 
-
 # Create your views here.
+from utils.any import ip2int, get_client_ip
 
 
-def login(request):
-    return render(request, 'account/login.html')
+class LoginPage(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect(to='/')
+        return render(request, 'account/login.html')
+
+    def post(self, request):
+        e_data = {'error_info': '',
+                  'return_page': '/login',
+                  'return_text': '回登录页面'}
+        dic = request.POST
+        username = dic.get('username')
+        password = dic.get('password')
+        img_code = dic.get('img_code')
+        uuid = dic.get('uuid')
+
+        if not all((username, password, img_code, uuid)):
+            e_data['error_info'] = f'param username: {username}, password: {password},' \
+                f' img_code: {img_code}, uuid: {uuid} required'
+            return render(request, 'common_error.html', e_data, status=403)
+
+        redis_conn = get_redis_connection('verify_code')
+        img_code_server = redis_conn.get(f'img_code_{uuid}')
+        if not img_code_server:
+            e_data['error_info'] = '图形验证码已过期'
+            return render(request, 'common_error.html', e_data, status=403)
+        if img_code_server.decode() != img_code:
+            e_data['error_info'] = f'图形验证码不一致 {img_code_server.decode()} {img_code}'
+            return render(request, 'common_error.html', e_data, status=403)
+
+        user = authenticate(username=username, password=password)
+        if user is None:
+            e_data['error_info'] = f'authenticate failed'
+            return render(request, 'common_error.html', e_data, status=403)
+        login(request=request, user=user)
+        user.login_ip = ip2int(get_client_ip(request))
+        user.save()
+
+        _next = request.GET.get('next')
+        response = redirect(_next) if _next else redirect('/')
+        # 用于页面user_info_bar展示用户信息
+        cookie_expire = settings.__getattr__('COOKIE_EXPIRE') or 3600 * 24 * 7
+        response.set_cookie(key='username', value=user.username, max_age=cookie_expire)
+        return response
 
 
-def logined(request):
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    user = User.objects.filter(username__exact=username)
-    if len(user) != 1:
-        result = 'username failed'
-        data = {
-            'result': result,
-        }
-    else:
-        shifted_password = hmac.new(key=bytes(user[0].salt, encoding='utf-8'), msg=bytes(password, encoding='utf-8'),
-                                    digestmod='MD5').hexdigest()
-        if shifted_password != User.objects.get(username__exact=username).password:
-            result = 'password failed'
-            data = {
-                'result': result,
-            }
-        else:
-            result = 'ok'
-            request.session['user'] = {
-                'username': user[0].username,
-                'email': user[0].email,
-                'img': str(user[0].img),
-            }
-            data = {
-                'result': result,
-                'username': user[0].username,
-                'email': user[0].email,
-            }
-    # print(request.session)
-    return render(request, 'account/logined.html', data)
+class RegisterPage(View):
+    def get(self, request):
+        if request.user.is_authenticated:
+            return redirect(to='/')
+        return render(request, 'account/register.html')
 
+    def post(self, request):
+        dic = request.POST  # from form
+        e_data = {'error_info': '',
+                  'return_page': '/register',
+                  'return_text': '回注册页面'}
+        # print(dic)
+        username = dic.get('username')
+        password = dic.get('password')
+        password2 = dic.get('password2')
+        email = dic.get('email')
+        allow = dic.get('allow')
+        uuid = dic.get('uuid')
+        img_code = dic.get('img_code')
+        sms_code = dic.get('sms_code')
 
-def regist(request):
-    data = {
+        if not all((username, password, password2, email, allow, uuid, img_code)):
+            e_data['error_info'] = 'param username, password, password2, mobile, allow, uuid, img_code required'
+            return render(request, 'common_error.html', e_data, status=403)
+        if not re.match(r'^[a-zA-Z0-9_-]{5,20}$', username):
+            e_data['error_info'] = '5-20字符的username'
+            return render(request, 'common_error.html', e_data, status=403)
+        if not re.match(r'^.{8,20}$', password):
+            e_data['error_info'] = '8-20字符的password'
+            return render(request, 'common_error.html', e_data, status=403)
+        if password2 != password:
+            e_data['error_info'] = '密码不一致'
+            return render(request, 'common_error.html', e_data, status=403)
+        if not re.match(r"^\w+[-_.]*[a-zA-Z0-9_.+1]+@[a-zA-Z0-9]+\.[a-zA-Z0-9-.]+$", email):
+            e_data['error_info'] = '邮箱格式不符'
+            return render(request, 'common_error.html', e_data, status=403)
+        if allow != 'on':
+            e_data['error_info'] = '未勾选xx协议'
+            return render(request, 'common_error.html', e_data, status=403)
 
-    }
-    return render(request, 'account/regist.html', data)
+        redis_conn = get_redis_connection('verify_code')
+        img_code_server = redis_conn.get(f'img_code_{uuid}')
+        if not img_code_server:
+            e_data['error_info'] = '图形验证码已过期'
+            return render(request, 'common_error.html', e_data, status=403)
+        if img_code_server.decode() != img_code:
+            e_data['error_info'] = f'图形验证码不一致 {img_code_server.decode()} {img_code}'
+            return render(request, 'common_error.html', e_data, status=403)
 
+        sms_code_server = redis_conn.get(f'sms_code_{uuid}')
+        if sms_code not in settings.__getattr__('FREE_SMS_CODE'):
+            if not sms_code_server:
+                e_data['error_info'] = '短信验证码已过期'
+                return render(request, 'common_error.html', e_data, status=403)
+            if sms_code_server.decode() != sms_code:
+                e_data['error_info'] = f'短信验证码不一致'
+                return render(request, 'common_error.html', e_data, status=403)
 
-def registed(request):
-    username = request.POST.get('username')
-    password = request.POST.get('password')
-    email = request.POST.get('email')
-    result = 'ok'
-    user = User.objects.filter(username__exact=username)
-    # print(len(user))
-    if len(user) >= 1:
-        result = 'not ok'
-    else:
-        newuser = User()
-        newuser.username = username
-        newuser.salt = str(random.randint(1, 100000)) + random.choice(username) + random.choice(username)
-        newuser.password = hmac.new(key=bytes(newuser.salt, encoding='utf-8'), msg=bytes(password, encoding='utf-8'),
-                                    digestmod='MD5').hexdigest()
-        newuser.email = email
-        dt = datetime.datetime.now()
-        newuser.regist_time = dt
-        newuser.access_time = dt
-        newuser.save()
+        try:
+            new_user = User.objects.create_user(username=username, password=password, email=email)
+        except DatabaseError as e:
+            e_data['error_info'] = str(e)
+            return render(request, 'common_error.html', e_data, status=403)
 
-        user = User.objects.filter(username__exact=username)
-        request.session['user'] = {
-            'username': user[0].username,
-            'email': user[0].email,
-            'img': str(user[0].img),
-        }
-    data = {
-        'result': result,
-    }
-    return render(request, 'account/registed.html', data)
+        login(request=request, user=new_user)
+
+        response = redirect('/')
+        cookie_expire = settings.__getattr__('COOKIE_EXPIRE') or 3600 * 24 * 7
+        response.set_cookie(key='username', value=new_user.username, max_age=cookie_expire)
+        return response
 
 
 def index(request):
-    # ip = get_ip.get_ip(request)
-    # print(ip)
-    counts = len(User.objects.raw('select * from account_user;'))
-    try:
-        user = request.session['user']
-    except KeyError:
-        data = {
-            'counts': counts,
-        }
-        return render(request, 'account/index.html', data)
-    u = User.objects.filter(username__exact=user['username'])
-    if len(u) == 1:
-        u = u[0]
-    else:
-        request.session.clear()
-        return redirect('/index/')
+    user = request.user
+    counts = User.objects.count()
 
-    upload = request.FILES.get('img')
-    if upload:
-        u.img = upload
-    data = {
-        'username': user['username'],
-        'email': user['email'],
-        'img': u.img,
-        'counts': counts,
-        'atime': str(u.access_time).split('.')[0],
-        'ip': u.access_ip
-    }
-    u.access_time = datetime.datetime.now()
-    u.access_ip = get_ip.get_ip(request)
-    u.save()
-    # print(data)
-    return render(request, 'account/index.html', data)
+    # upload = request.FILES.get('img')
+    # if upload:
+    #     user.img = upload
+    #     user.save()
+
+    data = {'counts': counts}
+
+    if user.is_authenticated:
+        data.update({
+            'username': user.username,
+            'email': user.email,
+            'img': user.img,
+            'atime': user.last_login,
+            'ip': user.login_ip,
+        })
+
+    return render(request, 'index.html', data)
 
 
-def logout(request):
-    request.session.clear()
-    return redirect(r'/index/')
+class LogoutPage(View):
+
+    def get(self, request):
+        _next = request.GET.get('next')
+        logout(request)
+        response = redirect(_next or '/')
+        response.delete_cookie(key='username')
+        return response
+
+
+class ProfilePage(View):
+
+    def get(self, request):
+
+        return render(request, 'account/profile.html')
 
 
 def ajax_test(request):

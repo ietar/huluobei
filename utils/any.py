@@ -1,26 +1,23 @@
 # -*- coding: utf-8 -*-
 import copy
-import json
+# import json
 import logging
 import random
 import re
-import typing as _t
-from collections import OrderedDict
+# import typing as _t
 
-from alipay import AliPay
 from captcha.image import ImageCaptcha, random_color as rc
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.auth.backends import ModelBackend
+# from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
-from django_redis import get_redis_connection
-from itsdangerous import TimedJSONWebSignatureSerializer as TimedJWSS
+# from django_redis import get_redis_connection
 from rest_framework.views import APIView
 
-from goods.models import GoodsChannel
-from utils.crypto import load_cookie_carts
+# from utils.crypto import load_cookie_carts
 
 logger = logging.getLogger('django')
 
@@ -34,24 +31,6 @@ def get_client_ip(request):
     return ip
 
 
-def get_alipay_object(settings: dict):
-
-    alipay_settings = settings
-    appid = alipay_settings.get('app_id')
-    app_private_key = alipay_settings.get('app_private_key')
-    alipay_public_key = alipay_settings.get('alipay_public_key')
-    debug = alipay_settings.get('debug')
-
-    obj = AliPay(appid=appid,
-                 app_notify_url=None,
-                 app_private_key_string=app_private_key,
-                 alipay_public_key_string=alipay_public_key,
-                 sign_type='RSA2',
-                 debug=debug
-                 )
-    return obj
-
-
 def get_key_by_value(dic: dict, value):
     values = list(dic.values())
     try:
@@ -60,97 +39,6 @@ def get_key_by_value(dic: dict, value):
         return None
 
     return list(dic.keys()).__getitem__(index)
-
-
-def merge_carts(request, user):
-    cookie_carts = request.COOKIES.get('carts')
-    if cookie_carts:
-        cookie_carts = load_cookie_carts(cookie_carts)
-    else:
-        cookie_carts = {}
-
-    redis_conn = get_redis_connection('carts')
-    redis_record = redis_conn.get(f'carts_{user.id}') or b'{}'
-    redis_carts = json.loads(redis_record)
-
-    for k, v in cookie_carts.items():
-        if k in redis_carts:
-            redis_carts['count'] += v['count']
-            redis_carts['selected'] = redis_carts['selected'] or v['selected']
-        else:
-            redis_carts[k] = v
-
-    redis_conn.set(name=f'carts_{user.id}', value=json.dumps(redis_carts))
-
-
-def get_categories():
-    o_dict = OrderedDict()
-    t2s = GoodsChannel.objects.all().order_by('group_id', 'sequence')
-    for t2 in t2s:
-        t1 = t2.group_id
-        if t1 not in o_dict:
-            o_dict[t1] = {'channels': [], 'subs': []}
-
-        cat1 = t2.category
-        temp = {'id': cat1.id,
-                'name': cat1.name,
-                'url': t2.url
-                }
-        o_dict[t1]['channels'].append(temp)
-
-        cat2s = cat1.subs.all().order_by('id')
-        for cat2 in cat2s:
-            temp2 = {'id': cat2.id, 'name': cat2.name, 'subs': []}
-
-            cat3s = cat2.subs.all().order_by('id')
-            for cat3 in cat3s:
-                temp2['subs'].append({'id': cat3.id, 'name': cat3.name})
-
-            o_dict[t1]['subs'].append(temp2)
-
-    return o_dict
-
-
-def check_verify_email_token(token: str) -> _t.Union[None, AbstractUser]:
-    """
-
-    :param token:
-    :return: user or None
-    """
-    s = TimedJWSS(secret_key=settings.SECRET_KEY)
-    try:
-        data = s.loads(token)
-    except Exception as e:
-        logger.error(e)
-        return None
-    else:
-        user_id = data.get('user_id')
-        email = data.get('email')
-        user_model = get_user_model()
-        try:
-            user = user_model.objects.get(id=user_id, email=email)
-        except user_model.DoesNotExist:
-            return None
-        else:
-            return user
-
-
-def get_verify_email_url(user: AbstractUser, prefix: str) -> str:
-    """
-    生成验证邮箱的url
-    :param prefix: domain 域名 通过request.META.get('HTTP_ORIGIN')获取
-    :param user:
-    :return:
-    """
-    # s = sl(secret_key=settings.SECRET_KEY, expires_in=settings.__getattr__('EMAIL_VERIFY_EXPIRATION'))
-    s = TimedJWSS(secret_key=settings.SECRET_KEY)
-    data = {
-        'user_id': user.id,
-        'email': user.email,
-    }
-    token = s.dumps(data).decode()
-    url = prefix + settings.__getattr__('EMAIL_VERIFY_SUFFIX') + '?token=' + token
-    return url
 
 
 def ip2int(_ip: str) -> int:
@@ -268,35 +156,35 @@ def get_user(account: str, user_model: AbstractUser):
             user = user_model.objects.get(username=account)
         else:
             user = user_model.objects.get(mobile=account)
-    except user_model.DoesNotExist:
+    except ObjectDoesNotExist:
         return None
     return user
 
 
-class UsernameMobileBackend(ModelBackend):
-    """
-    自定义用户认证后端
-    """
-
-    def authenticate(self, request, username=None, password=None, **kwargs):
-        """
-        :param request:
-        :param username: username or password
-        :param password:
-        :param kwargs:
-        :return:
-        """
-        user_model = get_user_model()
-        if username is None:  # jwt
-            username = kwargs.get(user_model.username)
-        if username is None or password is None:
-            return None
-
-        user = get_user(account=username, user_model=user_model)
-        if user and user.check_password(password) and user.is_active:
-            return user
-        else:
-            return None
+# class UsernameMobileBackend(ModelBackend):
+#     """
+#     自定义用户认证后端
+#     """
+#
+#     def authenticate(self, request, username=None, password=None, **kwargs):
+#         """
+#         :param request:
+#         :param username: username or password
+#         :param password:
+#         :param kwargs:
+#         :return:
+#         """
+#         user_model = get_user_model()
+#         if username is None:  # jwt
+#             username = kwargs.get(user_model.username)
+#         if username is None or password is None:
+#             return None
+#
+#         user = get_user(account=username, user_model=user_model)
+#         if user and user.check_password(password) and user.is_active:
+#             return user
+#         else:
+#             return None
 
 
 class LoginRequiredJsonMixin(LoginRequiredMixin):
@@ -347,4 +235,8 @@ if __name__ == '__main__':
     # print(ip2int('127.0.0.1'))
     # print(int2ip(4294967295))
 
+    # a1 = get_key_by_value({'1': '123', '2': '223'}, '223')
+    # a2 = get_key_by_value({'1': '123', '2': '223'}, '224')
+    # a3 = get_key_by_value({'1': '123', '2': '223'}, '225')
+    # print(a1, a2, a3)
     pass

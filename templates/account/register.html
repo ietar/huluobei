@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册 -- 胡萝呗</title>
+    <link rel="stylesheet" href="/static/css/register.css">
+    <link rel="stylesheet" href="/static/css/default.css">
+
+    <script type="text/javascript" src="/static/js/vue.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-3.4.1.js"></script>
+    <script type="text/javascript" src="/static/js/axios0.24.0.js"></script>
+    <script type="text/javascript" src="/static/js/pre_common.js"></script>
+
+</head>
+<body>
+    <div class="header clearfix">
+        <div class="container">
+            <div class="where_am_i">
+                <a href="/">首页</a> >> <a href={{ url('account:register') }}>注册</a>
+            </div>
+            <div class="search_bar" id="search_bar" v-cloak>
+                <form action="/search/" method="get">
+                    <input type="text" class="search_input" :placeholder="search_place_holder" name="q" autocomplete="off">
+                    <input type="submit" value="提交">
+                </form>
+            </div>
+            <div class="user_info" id="user_info_bar" v-cloak>
+                <div v-if="username">
+                    <a class="username" href={{ url('account:profile') }}>[[ username ]]</a>
+                    <a id="logout" href={{ url('account:logout') }}>退出</a>
+                </div>
+                <div v-else>
+                    <a id="register" href={{ url('account:register') }}>注册</a>
+                    <a id="login" href={{ url('account:login') }}>登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header_bottom">
+        <div id="app">
+            <form method="post" class="register_form" @submit="on_submit" v-cloak>
+                {{ csrf_input }}
+                <input type="hidden" id="uuid" name="uuid">
+                <ul>
+                    <li>
+    {#                    <label for="user_name" >用户名</label>#}
+                        <input type="text" name="username" id="user_name" autocomplete="off" v-model="username" @blur="check_username" placeholder="用户名">
+                        <span class="error_tip" v-show="error_name" id="error_name_message">[[ error_name_message ]]</span>
+                    </li>
+                    <li>
+    {#                    <label for="pwd">密码</label>#}
+                        <input type="password" name="password" id="pwd" autocomplete="off" v-model="password" @blur="check_password" placeholder="密码">
+                        <span class="error_tip" v-show="error_password">请输入8-20位的密码</span>
+                    </li>
+                    <li>
+    {#                    <label for="cpwd" >确认密码</label>#}
+                        <input type="password" name="password2" id="cpwd" v-model="password2" @blur="check_password2" placeholder="确认密码">
+                        <span class="error_tip" v-show="error_password2">两次输入的密码不一致</span>
+                    </li>
+                    <li>
+    {#                    <label for="phone">邮箱</label>#}
+                        <input type="text" name="email" id="email" v-model="email" @blur="email" placeholder="邮箱">
+                        <span class="error_tip" v-show="error_email">[[ error_email_message ]]</span>
+                    </li>
+                    <li>
+    {#                    <label for="pic_code">图形验证码</label>#}
+                        <input type="text" name="img_code" id="pic_code" class="msg_input" placeholder="图形验证码" v-model="img_code" @blur="check_img_code">
+                        <img :src="image_code_url" alt="图形验证码" class="pic_code" @click="generate_image_code" >
+                        <span class="error_tip" v-show="error_img_code">[[ error_img_message ]]</span>
+                    </li>
+                    <li>
+    {#                    <label for="msg_code">短信验证码</label>#}
+                        <input type="text" name="sms_code" id="msg_code" placeholder="短信验证码">
+                        <span class="send_sms_code blue_white_button" @click="send_sms_code">发送短信验证码</span>
+                        <span class="error_tip" v-show="error_sms_code">[[ error_sms_code_message ]]</span>
+                    </li>
+                    <li id="sms_code_error_status_code_rel" style="display:none">http://doc.yuntongxun.com/p/5a5857203b8496dd00dd2b3d https://www.yuntongxun.com/doc/rest/sms/3_2_1_3.html</li>
+                    <li class="agreement">
+                        <input type="checkbox" name="allow" id="allow" v-model="allow" @change="check_allow">
+                        <label for="allow">同意xxx协议</label>
+                        <span class="error_tip" v-show="error_allow">请勾选xxx协议</span>
+                        {% if register_errmsg %}
+                            <span class="error_tip">{{ register_errmsg }}</span>
+                        {% endif %}
+                    </li>
+                    <li class="reg_sub">
+                        <input type="submit" value="注册" class="blue_white_button">
+                    </li>
+                </ul>
+            </form>
+        </div>
+    </div>
+    <script src="/static/js/register.js"></script>
+    <script src="/static/js/common.js"></script>
+
+</body>
+</html>

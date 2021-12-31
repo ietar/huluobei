@@ -1,18 +1,19 @@
-from django.conf.urls.static import static
 from django.urls import re_path
 from account import views
-from huluobei import settings
 
 urlpatterns = [
-    re_path(r'login/$', views.login),
-    re_path(r'logined/$', views.logined),
-    re_path(r'regist/$', views.regist),
-    re_path(r'registed/$', views.registed),
-    re_path(r'index/$', views.index),
-    re_path(r'logout/$', views.logout),
-    re_path(r'resetpassword/$', views.resetpassword),
+
+    # re_path(r'resetpassword/$', views.resetpassword),
     re_path(r'sendresetmail/$', views.sendresetmail),
     re_path(r'reset/$', views.reset),
     re_path(r'reset_done/$', views.reset_done),
     # re_path(r'upload/$', views.upload),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    re_path(r'login/$', views.LoginPage.as_view(), name='login'),
+    re_path(r'register/$', views.RegisterPage.as_view(), name='register'),
+    re_path(r'logout/$', views.LogoutPage.as_view(), name='logout'),
+    re_path(r'profile/$', views.ProfilePage.as_view(), name='profile'),
+    re_path(r'reset_password/$', views.resetpassword, name='reset_password'),  # todo
+
+
+]

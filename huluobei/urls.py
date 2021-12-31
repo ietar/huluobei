@@ -20,14 +20,15 @@ from django.urls import path, re_path, include
 from django.views.generic import RedirectView
 
 from account import views
-from huluobei import settings
-from crawlers import urls as crawler_urls
+from django.conf import settings
+from verifications import views as verification_view
 
 urlpatterns = [
     re_path('^$', views.index),
     path('admin/', admin.site.urls),
-    re_path('account/', include('account.urls')),
+    re_path('^', include(('account.urls', 'account'), namespace='account')),
     re_path('api/', include('api.urls')),
+    re_path('^', include('crawlers.urls')),
     re_path('book_drf/', include('book_drf.urls')),
     re_path('ajax_test/$', views.ajax_test),
     re_path('index/$', views.index),
@@ -37,5 +38,7 @@ urlpatterns = [
     # re_path(r'^favicon.ico/$', serve, {'path': 'img/favicon.ico'}),  # 抄的 实现方式未知
     re_path(r'^drawcards/$', views.drawcards),
     re_path(r'^reset_record/$', views.reset_record),
+
+    re_path(r'^image_codes/(?P<uuid>[\w-]+)/$', verification_view.ImageCodeView.as_view(), name='image_codes'),
     url(r'favicon.ico', RedirectView.as_view(url=r'static/img/favicon.ico')),
-] + crawler_urls.urlpatterns + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
