@@ -6,3 +6,7 @@
 1.cmd
 .idea/misc.xml
 .idea/zhihu_django.iml
+settings_prod.py
+uwsgi.log
+uwsgi_prod.ini
+wsgi_prod.py

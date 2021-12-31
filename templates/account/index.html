@@ -51,7 +51,7 @@
 
         {% if username %}
             <div style="display:inline-flex;position:absolute;right:0;align-items:center;justify-content: center">
-                <img style="display:inline" alt="头像" src="/media/{{img}}/" onclick="upload()" height=30px>
+                <img style="display:inline" alt="头像" src="/media/{{img}}" onclick="upload()" height=30px>
                 <span style="display:inline;margin:0 0.5rem">{{username}}</span>
                 <span style="display:inline"><a href="/account/logout/">退出</a></span>
             </div>
@@ -69,7 +69,7 @@
             <h2>用户名: {{username}}</h2>
             <h2>邮箱: {{email}}</h2>
             <h2>头像(单击即可修改头像):</h2>
-            <img src="/media/{{img}}/" onclick="upload()">
+            <img src="/media/{{img}}" onclick="upload()">
             <!--div class="photo" style="background-image: url('{{ img }}')"-->
             <form action="" method="post" enctype="multipart/form-data" style="display:none">
                 <input type="file" id="uploadimg" name="img" onchange="submitimg()" accept="image/*"><!--style="opacity:0"-->
