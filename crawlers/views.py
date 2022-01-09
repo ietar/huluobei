@@ -141,7 +141,7 @@ def book(request):
     # 目录
     data = {'book_name': 0}
     u = login_check(request)
-    if u:
+    if u.is_authenticated:
         data.update({'username': u.username, 'user_img': u.img})
     url = request.path
     if not url.endswith(r'/'):
@@ -179,7 +179,7 @@ def books(request):
     data = {}
     # u = login_check(request)
     u = request.user
-    if u:
+    if u.is_authenticated:
         data.update({'username': u.username, 'user_img': u.img})
         user_collections = json.loads(u.collections)
     else:
@@ -193,7 +193,7 @@ def books(request):
         'collections': user_collections,
     })
 
-    print(data, u)
+    # print(data, u)
     return render(request, 'crawlers/books.html', data)
 
 
