@@ -71,13 +71,13 @@ function f3(){
     iframe.width = 0;
     iframe.height = 0;
 }
-$(function () {
-    let buttons = $('div.header>div.container>div');
-    buttons.mouseenter(function () {
-        $(this).find('div').slideDown(300);
-    });
-    buttons.mouseleave(function () {
-        // console.log('trying:', $(this).find('div'));
-        $(this).find('div').slideUp(100);
-    })
-});
+// $(function () {
+//     let buttons = $('div.header>div.container>div');
+//     buttons.mouseenter(function () {
+//         $(this).find('div').slideDown(300);
+//     });
+//     buttons.mouseleave(function () {
+//         // console.log('trying:', $(this).find('div'));
+//         $(this).find('div').slideUp(100);
+//     })
+// });
