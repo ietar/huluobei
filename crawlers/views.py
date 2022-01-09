@@ -140,7 +140,7 @@ def get_content(request):
 def book(request):
     # 目录
     data = {'book_name': 0}
-    u = login_check(request)
+    u = request.user
     if u.is_authenticated:
         data.update({'username': u.username, 'user_img': u.img})
     url = request.path
