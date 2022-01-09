@@ -36,9 +36,9 @@ def login_check(request) -> ret_u:
 
 def get_chapter(request):
     # 获取简介 自用
-    u = login_check(request)
-    if u.username != 'ietar':
-        return HttpResponse('别动这个 叫ietar来')
+    u = request.user
+    if not u.is_staff or u.is_superuser:
+        return HttpResponse('非管理员 无操作权限')
 
     try:
         book_id = request.GET['id']
@@ -77,9 +77,10 @@ def get_content(request):
     # time.sleep(5)
     # lock.release()
     # return HttpResponse('lock')
-    u = login_check(request)
-    if u.username != 'ietar':
-        return HttpResponse('别动这个 叫ietar来')
+    # u = login_check(request)
+    u = request.user
+    if not u.is_staff or u.is_superuser:
+        return HttpResponse('非管理员 无操作权限')
     get_dict = request.GET
     # print(get_dict, dir(get_dict))
     if not get_dict:
