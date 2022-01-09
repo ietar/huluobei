@@ -36,7 +36,7 @@ def get_chapters(book_id: int, current_chapter: int, chapter_count: int, prefix=
     return chapters
 
 
-def get_a_chapter(book_id: int, prefix=0) -> (str, str,str):
+def get_a_chapter(book_id: int, prefix=0) -> (str, str, str):
     # 获取简介
     url_chapters = root_url + f'{prefix}_' + str(book_id) + r'/'
     response = requests.get(url_chapters, headers=headers)
