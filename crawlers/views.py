@@ -79,7 +79,7 @@ def get_content(request):
     # return HttpResponse('lock')
     # u = login_check(request)
     u = request.user
-    if not u.is_staff or u.is_superuser:
+    if not u.is_staff or not u.is_superuser:
         return HttpResponse('非管理员 无操作权限')
     get_dict = request.GET
     # print(get_dict, dir(get_dict))
