@@ -176,7 +176,8 @@ def book(request):
 
 def books(request):
     data = {}
-    u = login_check(request)
+    # u = login_check(request)
+    u = request.user
     if u:
         data.update({'username': u.username, 'user_img': u.img})
         user_collections = json.loads(u.collections)
@@ -191,7 +192,7 @@ def books(request):
         'collections': user_collections,
     })
 
-    # print(data)
+    print(data, u)
     return render(request, 'crawlers/books.html', data)
 
 
