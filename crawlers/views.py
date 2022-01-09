@@ -37,7 +37,7 @@ def login_check(request) -> ret_u:
 def get_chapter(request):
     # 获取简介 自用
     u = request.user
-    if not u.is_staff or u.is_superuser:
+    if not u.is_staff or not u.is_superuser:
         return HttpResponse('非管理员 无操作权限')
 
     try:
