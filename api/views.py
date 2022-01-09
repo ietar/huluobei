@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.http import QueryDict
 from django.utils import timezone
 from django.views import View
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -18,10 +19,59 @@ from account.models import User
 from crawlers.models import Book, BookContent, Comment
 from utils.any import LoginRequiredJsonMixin
 from utils.default_data import n_data
+from utils.filters import BookFilter, BookContentFilter
+from utils.models import CustomResponseModelViewSet
 # Create your views here.
-from utils.serializer import SimpleModelSerializer
+from utils.serializer import SimpleModelSerializer, BookSerializer, BookContentSerializer, CommentSerializer
 
 logger = logging.getLogger('django')
+
+
+class ResetPasswordView(APIView):
+    def post(self, request):
+        # print('1', request.POST)
+        res = n_data()
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        re_password = request.POST.get('re_password')
+        reset_password_salt = request.POST.get('reset_password_salt')
+        if password != re_password:
+            res['result'] = False
+            res['msg'] = '两次密码不一致'
+            return Response(res, status=400)
+        try:
+            user = User.objects.get(username=username, reset_password_salt=reset_password_salt)
+        except ObjectDoesNotExist:
+            return Response(status=401)
+
+        user.set_password(password)
+        user.save()
+
+        res['data'] = {'username': username, 'password': password}
+        return Response(res, status=200)
+
+
+class BookView(CustomResponseModelViewSet):
+    serializer_class = BookSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Book.objects.all()
+    filter_class = BookFilter
+    filter_fields = ['username', 'author', 'using', 'book_id']
+
+
+class BookContentView(CustomResponseModelViewSet):
+    serializer_class = BookContentSerializer
+    permission_classes = [IsAdminUser]
+    queryset = BookContent.objects.all()
+    filter_class = BookContentFilter
+
+    filter_fields = ['book_name', 'chapter', 'chapter_count']
+
+
+class CommentView(CustomResponseModelViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAdminUser]
+    queryset = Comment.objects.all()
 
 
 class UserView(LoginRequiredJsonMixin, APIView):

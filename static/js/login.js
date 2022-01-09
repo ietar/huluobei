@@ -53,6 +53,9 @@ let vm = new Vue({
             let re = /^[a-zA_Z0-9-_@]{8,20}$/;
             this.error_password = !re.test(this.password);
         },
+        forget_password(){
+            window.location = '/account/forget_password/';
+        },
         on_submit(){
             this.check_img_code();
 

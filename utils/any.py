@@ -22,6 +22,11 @@ from rest_framework.views import APIView
 logger = logging.getLogger('django')
 
 
+def hidden_email(email: str, number=4):
+    """隐藏邮箱的用户名部分"""
+    return email.split('@', 1)[0][:-number] + '****@' + email.split('@', 1)[1]
+
+
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
     if x_forwarded_for:

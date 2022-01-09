@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import path, re_path, include
 from django.views.generic import RedirectView
 
@@ -27,12 +28,12 @@ urlpatterns = [
     re_path('^$', views.index),
     path('admin/', admin.site.urls),
     re_path('^', include(('account.urls', 'account'), namespace='account')),
-    re_path('api/', include('api.urls')),
+    re_path('^api/', include('api.urls')),
     re_path('^', include('crawlers.urls')),
-    re_path('book_drf/', include('book_drf.urls')),
-    re_path('ajax_test/$', views.ajax_test),
-    re_path('index/$', views.index),
-    re_path('shit/$', views.shit),
+    re_path('^book_drf/', include('book_drf.urls')),
+    # re_path('ajax_test/$', views.ajax_test),
+    re_path('^index/$', views.index),
+    # re_path('shit/$', views.shit),
     re_path('usercheck', views.usercheck),
     re_path('emailcheck', views.emailcheck),
     # re_path(r'^favicon.ico/$', serve, {'path': 'img/favicon.ico'}),  # 抄的 实现方式未知
@@ -41,4 +42,6 @@ urlpatterns = [
 
     re_path(r'^image_codes/(?P<uuid>[\w-]+)/$', verification_view.ImageCodeView.as_view(), name='image_codes'),
     url(r'favicon.ico', RedirectView.as_view(url=r'static/img/favicon.ico')),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+urlpatterns += staticfiles_urlpatterns()

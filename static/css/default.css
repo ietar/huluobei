@@ -62,6 +62,12 @@ a{
 	background-color: silver;
 	margin:1rem;
 }
+.button_inline{
+	border:1px #d6877b solid;
+	background-color: silver;
+	display: inline-block;
+	padding:0.5rem;
+}
 .blue_white_button{
 	-webkit-border-radius: 20%;
 	-moz-border-radius: 20%;

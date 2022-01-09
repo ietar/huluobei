@@ -1,5 +1,7 @@
 # from django.conf.urls.static import static
 from django.urls import re_path
+from rest_framework.routers import DefaultRouter
+
 from . import views, account_views
 # from huluobei import settings
 
@@ -12,4 +14,12 @@ urlpatterns = [
     re_path(r'anything/$', views.AnythingView.as_view(), name='anything'),
     re_path(r'user_exist/$', views.UserExistView.as_view(), name='user_exist'),
     re_path(r'user/$', views.UserView.as_view(), name='user'),
+    re_path(r'reset_password/$', views.ResetPasswordView.as_view(), name='reset_password'),
 ]
+
+router = DefaultRouter()
+router.register('books', views.BookView, basename='books')
+router.register('book_content', views.BookContentView, basename='book_content')
+router.register('comment', views.CommentView, basename='comment')
+
+urlpatterns += router.urls

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_filters',
     'account',
     'books',
     'crawlers',
@@ -163,7 +164,7 @@ SESSION_REDIS_PREFIX = 'session'
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
-        # 'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ],
     # 认证
     'DEFAULT_AUTHENTICATION_CLASSES': (
@@ -174,6 +175,10 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': (
     #     'rest_framework.permissions.IsAuthenticated',
     # )
+    'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.OrderingFilter',
+    ),
 }
 
 LOGGING = {
@@ -257,6 +262,8 @@ CACHES = {
 
 
 # custom
+RESET_PASSWORD_EMAIL_TTL_MINUTES = 30  # 重置密码找回邮件有效期
+
 FREE_SMS_CODE = ['333666', ]  # 万能短信校验码
 
 COOKIE_EXPIRE = 3600 * 24 * 14  # 登录存储用户名到cookie
