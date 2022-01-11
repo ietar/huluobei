@@ -128,8 +128,9 @@ def get_content(request):
                 new_content.save()
                 count += 1
                 book1.current = book1.current + 1
-                book1.using = False
-                book1.save()
+                
+            book1.using = False
+            book1.save()
             r = f'已爬取 {count} 章,当前待爬取章节数为 {book1.current}, 用时{round(time.time() - t1, 2)}秒'
             return HttpResponse(r)
 
