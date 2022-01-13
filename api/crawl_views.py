@@ -3,6 +3,7 @@ import time
 import traceback
 
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
 from rest_framework.response import Response
 
 from crawlers.models import Book
@@ -35,14 +36,14 @@ async def get_content_view(request):
     except ObjectDoesNotExist:
         res['result'] = False
         res['msg'] = '还没这本书的简介 先去get_chapter'
-        return Response(res, status=400)
+        return JsonResponse(res, status=400)
 
     except Exception as e:
         traceback.print_exc()
         logger.error(e)
         res['result'] = False
         res['msg'] = str(e)
-        return Response(res, 400)
+        return JsonResponse(res, status=400)
 
     try:
         if book1.using:
@@ -54,7 +55,7 @@ async def get_content_view(request):
         book1.using = False
         book1.save()
         res['msg'] = f'已提交,当前待爬取章节数为 {book1.current + target}, 用时{round(time.time() - t1, 2)}秒'
-        return Response(res)
+        return JsonResponse(res)
 
     except Exception as e:
         traceback.print_exc()
@@ -63,4 +64,4 @@ async def get_content_view(request):
         book1.save()
         res['result'] = False
         res['msg'] = str(e)
-        return Response(res, 400)
+        return JsonResponse(res, status=400)
