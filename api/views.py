@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.http import QueryDict
 from django.utils import timezone
 from django.views import View
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -22,6 +23,7 @@ from utils.default_data import n_data
 from utils.filters import BookFilter, BookContentFilter
 from utils.models import CustomResponseModelViewSet
 # Create your views here.
+from utils.pagenations import PageNum, PageNum1
 from utils.serializer import SimpleModelSerializer, BookSerializer, BookContentSerializer, CommentSerializer
 
 logger = logging.getLogger('django')
@@ -64,6 +66,8 @@ class BookContentView(CustomResponseModelViewSet):
     permission_classes = [IsAdminUser]
     queryset = BookContent.objects.all()
     filter_class = BookContentFilter
+    # pagination_class = PageNum
+    pagination_class = PageNum1
 
     filter_fields = ['book_name', 'chapter', 'chapter_count']
 
@@ -82,18 +86,24 @@ class UserView(LoginRequiredJsonMixin, APIView):
         if not user.is_superuser:
             # 普通用户
             res['data'] = SimpleModelSerializer(model=User, instance=user,
-                                                fields=('username', 'email', 'login_ip', 'last_login')).data
+                                                fields=('username', 'email', 'login_ip', 'last_login', 'is_staff',
+                                                        'is_superuser')).data
         else:
             dic = request.query_params.dict()
             # admin
             try:
                 if not dic:
-                    res['data'] = SimpleModelSerializer(model=User, instance=user,
-                                                        fields=('username', 'email', 'login_ip', 'last_login')).data
+                    res['data'] = \
+                        SimpleModelSerializer(model=User, instance=user,
+                                              fields=(
+                                                  'username', 'email', 'login_ip', 'last_login', 'is_staff',
+                                                  'is_superuser')).data
                 else:
                     users = User.objects.filter(**dic)
                     res['data'] = SimpleModelSerializer(model=User, instance=users,
-                                                        fields=('username', 'email', 'login_ip', 'last_login'),
+                                                        fields=(
+                                                            'username', 'email', 'login_ip', 'last_login', 'is_staff',
+                                                            'is_superuser'),
                                                         many=True).data
             except Exception as e:
                 res['msg'] = f'{e}'
@@ -458,13 +468,8 @@ class CommentApi(View):
         comment = post_dict.get('comment')
         if comment is None:
             comment = ''
-        # if user_name is None:
-        #     user_name = ''
 
-        try:
-            user1 = User.objects.get(username=user_name)
-        except User.DoesNotExist:
-            user1 = False
+        user = request.user
 
         new_comment = Comment.objects.create(
             book_id=book_id,
@@ -480,9 +485,9 @@ class CommentApi(View):
         res['result'] = True
         res['msg'] = 'add comment successfully'
 
-        if user1:
-            user1.comments += 1
-            user1.save()
+        if user.is_authenticated:
+            user.comments += 1
+            user.save()
         return JsonResponse(res)
 
     def put(self, request, book_id, chapter_count):

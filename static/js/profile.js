@@ -24,6 +24,8 @@ let vm = new Vue({
         email: '',
         last_login: '',
         login_ip: '',
+        is_staff: '',
+        is_superuser: '',
         csrf: '',
         email_msg: '',
         mobile_msg: '',
@@ -57,6 +59,9 @@ let vm = new Vue({
                 this.email = user_info.email;
                 this.login_ip = int2ip(user_info.login_ip);
                 this.last_login = user_info.last_login;
+                this.is_staff = user_info.is_staff;
+                this.is_superuser = user_info.is_superuser;
+                console.log(user_info);
             }).catch(e =>{console.log(e)});
         },
         edit_email(){

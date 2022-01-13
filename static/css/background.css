@@ -1,0 +1,16 @@
+.digest{
+    width: 12rem;
+    display: -webkit-box;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+.background_table{
+    border:1px solid;
+    align-items: center;
+    text-align: center;
+}
+.background_table td{
+    padding: 1rem 1rem;
+    border: 1px solid
+}

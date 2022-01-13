@@ -107,7 +107,9 @@ def get_content_celery_view(request):
 
     try:
         if book1.using:
-            raise Exception('该书内容写入中 稍后再试')
+            res['result'] = False
+            res['msg'] = '该书内容写入中 稍后再试'
+            return JsonResponse(res, status=400, json_dumps_params={'ensure_ascii': False})
         else:
             book1.using = True
             book1.save()

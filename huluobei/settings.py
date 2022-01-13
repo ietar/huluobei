@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'book_drf',
     'verifications',
+    'background',
 ]
 
 AUTH_USER_MODEL = 'account.user'

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>后台 -- 胡萝呗</title>
+    <link rel="stylesheet" href="/static/css/default.css">
+    <link rel="stylesheet" href="/static/css/background.css">
+
+    <script type="text/javascript" src="/static/js/vue.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-3.4.1.js"></script>
+    <script type="text/javascript" src="/static/js/axios0.24.0.js"></script>
+    <script type="text/javascript" src="/static/js/pre_common.js"></script>
+    <script type="text/javascript" src="/static/js/index.js"></script>
+</head>
+<body>
+    <div class="header clearfix">
+        <div class="container">
+            <div class="where_am_i">
+                <a href="/">首页</a> >> <a href={{ url('background:index') }}>后台</a>
+            </div>
+            <div class="search_bar" id="search_bar" v-cloak>
+                <form action="/search/" method="get">
+                    <input type="text" class="search_input" :placeholder="search_place_holder" name="q" autocomplete="off">
+                    <input type="submit" value="提交">
+                </form>
+            </div>
+            <div class="user_info" id="user_info_bar" v-cloak>
+                <div v-if="username">
+                    <a class="username" href={{ url('account:profile') }}>[[ username ]]</a>
+                    <a id="logout" href={{ url('account:logout') }}>退出</a>
+                </div>
+                <div v-else>
+                    <a id="register" href={{ url('account:register') }}>注册</a>
+                    <a id="login" href={{ url('account:login') }}>登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header_bottom">
+        <div class="left_side_navigation">
+            <ul>
+                <li><a href="{{ url('background:books') }}">书籍管理</a></li>
+                <li><a href="{{ url('background:book_content') }}" class="choosing">内容管理</a></li>
+
+            </ul>
+        </div>
+        <div class="content">
+            <div id="app" v-clock>
+                {{ csrf_input }}
+                <table class="background_table">
+                    <tr>
+                        <td colspan="8">书籍信息</td>
+                    </tr>
+                    <tr>
+                        <td>id</td>
+                        <td>章节数</td>
+                        <td>章节名</td>
+                        <td>内容</td>
+                        <td>更新时间</td>
+                        <td>收藏</td>
+                        <td>浏览</td>
+                        <td>书名id</td>
+                    </tr>
+                    <tr v-for="content in book_contents">
+                        <td>[[ content.id ]]</td>
+                        <td>[[ content.chapter_count ]]</td>
+                        <td>[[ content.chapter]]</td>
+                        <td class="digest">[[ content.content ]]</td>
+                        <td>[[ content.update_time ]]</td>
+                        <td>[[ content.collect_count ]]</td>
+                        <td>[[ content.read_count ]]</td>
+                        <td>[[ content.book_name ]]</td>
+                    </tr>
+                </table>
+                <div class="pagination" v-cloak id="pagination">
+                    <a class="page" @click="to_page(1)">首页</a>
+                    <a class="page last_page"  @click="to_page(page_num-1)">上一页</a>
+                    <a class="page" :id="'page_num_' + page" v-for="page in Math.min(5, total_pages)" @click="to_page(page)">[[ page ]]</a>
+                    <span v-if="total_pages>5">
+                        <span>...</span>
+                        <a class="page" :id="'page_num_' + total_pages"  @click="to_page(total_pages)">[[ total_pages ]]</a>
+                    </span>
+                    <a class="page next_page" @click="to_page(page_num+1)">下一页</a>
+                    <a class="page" @click="to_page(total_pages)">尾页</a>
+                </div>
+                <span>每页数量: </span>
+                <input type="text" v-model="page_size" style="width:2rem;">
+                <span class="button clickable" @click="change_page_size(page_size)">刷新</span>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="sweets">
+        <form name="drawcards" id="drawcards" method="post" action="/drawcards/">
+            <!--<button type="button" onclick="f1()">试试手气</button>-->
+            <button type="button" onclick="f2()">试试手气</button>
+            <button type="button" onclick="f3()">一会再试</button>
+            <span id="draw_result"></span>
+            {% for i in ret %}
+                {{i.name}}
+            {% endfor %}
+        </form>
+        <iframe id="iframe1" src="" width="0" height ="0" frameborder="0" >您的浏览器不支持呀</iframe>
+    </div>
+    <div class="bei_an">
+        <img src="https://csdnimg.cn/pubfooter/images/gongan.png" alt="备案图标" class="inline">
+        <a href="http://beian.miit.gov.cn/publish/query/indexFirst.action">京ICP备19036293号-1</a>
+    </div>
+
+    <script src="/static/js/common.js"></script>
+    <script src="/static/js/background/book_content.js"></script>
+</body>
+</html>
