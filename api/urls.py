@@ -2,7 +2,7 @@
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
 
-from . import views, account_views
+from . import views, account_views, crawl_views
 # from huluobei import settings
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
     re_path(r'user_exist/$', views.UserExistView.as_view(), name='user_exist'),
     re_path(r'user/$', views.UserView.as_view(), name='user'),
     re_path(r'reset_password/$', views.ResetPasswordView.as_view(), name='reset_password'),
+    re_path(r'crawl/get_content/$', crawl_views.get_content_view, name='get_content'),
 ]
 
 router = DefaultRouter()
