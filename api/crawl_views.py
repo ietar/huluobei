@@ -2,6 +2,7 @@
 import time
 import traceback
 
+from asgiref.sync import sync_to_async
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 from rest_framework.response import Response
@@ -12,7 +13,8 @@ from utils.async_functions import async_get_content
 from utils.default_data import n_data
 
 
-async def get_content_view(request):
+@sync_to_async
+def get_content_view(request):
     # 爬内容了 自用
     res = n_data()
 
