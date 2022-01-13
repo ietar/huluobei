@@ -15,7 +15,8 @@ urlpatterns = [
     re_path(r'user_exist/$', views.UserExistView.as_view(), name='user_exist'),
     re_path(r'user/$', views.UserView.as_view(), name='user'),
     re_path(r'reset_password/$', views.ResetPasswordView.as_view(), name='reset_password'),
-    re_path(r'crawl/get_content/$', crawl_views.get_content_view, name='get_content'),
+    # re_path(r'crawl/get_content/$', crawl_views.get_content_view, name='get_content'),
+    re_path(r'crawl/get_content/$', crawl_views.get_content_celery_view, name='get_content_celery'),
 ]
 
 router = DefaultRouter()
